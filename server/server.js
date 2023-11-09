@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+const { sendOTP } = require('./email/mail.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -107,6 +109,31 @@ app.post('/webhook', async (req, res) => {
     console.log('❌ Payment failed.');
   }
   res.sendStatus(200);
+});
+
+// Endpoint to send OTP
+app.post('/send-otp', async (req, res) => {
+  console.log('Sending email',req.body)
+  const { email } = req.body;
+  const saltRounds = 10;
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  const hashedOtp = await bcrypt.hash(otp.toString(), saltRounds);
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+  else if (!otp) {
+    return res.status(400).json({ error: 'OTP is required' });
+  }
+
+  const emailSent = await sendOTP(email, otp);
+  console.log('emailSent',emailSent, otp)
+
+  if (emailSent) {
+    res.status(200).json({ hashedOtp: hashedOtp, message: 'OTP sent successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error sending the email' });
+  }
 });
 
 app.listen(4242, () =>
