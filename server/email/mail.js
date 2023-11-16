@@ -46,7 +46,7 @@ const emailTemplate = (otp, homePageTitle, logoImageUrl) => {
             <h3>Email Verification</h3>
             <div style="text-align: justify;">
               <p>
-                Thanks requesting your COMO 1907 One Time Password (OTP).
+                Thank you for requesting your COMO 1907 One Time Password (OTP).
                 <br>
                 <br>
                 We want to make sure it's really you.
