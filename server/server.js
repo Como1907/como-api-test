@@ -136,14 +136,14 @@ app.post('/send-otp', async (req, res) => {
     return res.status(400).json({ error: 'Email is required' });
   }
 
-  // const emailSent = await sendOTP(email, otp);
-  // console.log('emailSent',emailSent, otp)
+  const emailSent = await sendOTP(email, otp);
+  console.log('emailSent',emailSent, otp)
 
-  // if (emailSent) {
-  //   res.status(200).json({ hashedOtp: hashedOtp, message: 'OTP sent successfully'});
-  // } else {
-  //   res.status(500).json({ error: 'There was an error sending the email' });
-  // }
+  if (emailSent) {
+    res.status(200).json({ hashedOtp: hashedOtp, message: 'OTP sent successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error sending the email' });
+  }
 });
 
 app.listen(4242, () =>
