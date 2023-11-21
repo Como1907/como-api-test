@@ -4,9 +4,22 @@ const express = require('express');
 const app = express();
 const {resolve} = require('path');
 const cors = require('cors');
+const basicAuth = require('express-basic-auth');
 // Replace if using a different env file or config
 const env = require('dotenv').config({path: './.env'});
+
 app.use(cors());
+
+const basicAuthorizer = (username, password) => {
+  const userMatches = basicAuth.safeCompare(username, process.env.BASIC_AUTH_USERNAME);
+  const passwordMatches = basicAuth.safeCompare(password, process.env.BASIC_AUTH_PASSWORD);
+
+  return userMatches & passwordMatches;
+};
+app.use(basicAuth({
+  authorizer: basicAuthorizer,
+  challenge: true,
+}));
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2020-08-27',
@@ -122,18 +135,15 @@ app.post('/send-otp', async (req, res) => {
   if (!email) {
     return res.status(400).json({ error: 'Email is required' });
   }
-  else if (!otp) {
-    return res.status(400).json({ error: 'OTP is required' });
-  }
 
-  const emailSent = await sendOTP(email, otp);
-  console.log('emailSent',emailSent, otp)
+  // const emailSent = await sendOTP(email, otp);
+  // console.log('emailSent',emailSent, otp)
 
-  if (emailSent) {
-    res.status(200).json({ hashedOtp: hashedOtp, message: 'OTP sent successfully'});
-  } else {
-    res.status(500).json({ error: 'There was an error sending the email' });
-  }
+  // if (emailSent) {
+  //   res.status(200).json({ hashedOtp: hashedOtp, message: 'OTP sent successfully'});
+  // } else {
+  //   res.status(500).json({ error: 'There was an error sending the email' });
+  // }
 });
 
 app.listen(4242, () =>
