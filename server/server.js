@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { sendOTP } = require('./email/mail.js');
+const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -141,6 +141,25 @@ app.post('/send-otp', async (req, res) => {
 
   if (emailSent) {
     res.status(200).json({ hashedOtp: hashedOtp, message: 'OTP sent successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error sending the email' });
+  }
+});
+
+// Endpoint to send Ticket Purchase Email
+app.post('/send-ticket-purchase-email', async (req, res) => {
+  console.log('Sending email',req.body)
+  const { email, ticket, language } = req.body.payload;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const emailSent = await sendTicketPurchaseEmail(email, ticket, language);
+  console.log('emailSent', emailSent)
+
+  if (emailSent) {
+    res.status(200).json({ message: 'Email sent successfully'});
   } else {
     res.status(500).json({ error: 'There was an error sending the email' });
   }
