@@ -161,7 +161,7 @@ const emailTemplateTicketPurchase = (ticket, language, homePageTitle, logoImageU
                         <div class="mb-1">
                           <p class="my-025" style="font-size:13px">
                             Time of Purchase<br>
-                            ${format.asString('dd/MM/yyyy hh:mm', new Date(ticket.modified + (60 * 60) ))}
+                            ${format.asString('dd/MM/yyyy hh:mm', new Date(ticket.modified + (60 * 60 * 1000) ))}
                           </p>
                         </div>
                       </div>
@@ -277,7 +277,7 @@ const emailTemplateTicketPurchase = (ticket, language, homePageTitle, logoImageU
                         <div class="mb-1">
                           <p class="my-025" style="font-size:13px">
                             Momento dell'acquisto<br>
-                            ${format.asString('dd/MM/yyyy hh:mm', new Date(ticket.modified + (60 * 60) ))}
+                            ${format.asString('dd/MM/yyyy hh:mm', new Date(ticket.modified + (60 * 60 * 1000) ))}
                           </p>
                         </div>
                       </div>

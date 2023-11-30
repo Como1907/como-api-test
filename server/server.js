@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
+const { getSeasonTicketSeatsArray } = require('./firebase/firebase.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -123,6 +124,33 @@ app.post('/webhook', async (req, res) => {
   }
   res.sendStatus(200);
 });
+
+// #############################################################################
+// ############################ FIREBASE ACTIONS ###############################
+// #############################################################################
+
+app.post('/get-season-seats-array', async (req, res) => {
+  console.log('Requesting Array', req.body)
+  const { season } = req.body;
+
+  if (!season) {
+    return res.status(400).json({ error: 'Season is required' });
+  }
+
+  const seasonArr = await getSeasonTicketSeatsArray(season);
+  console.log('Array received', seasonArr)
+
+  if (seasonArr) {
+    res.status(200).json({ seasonArr: seasonArr, message: 'Season Array received successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error getting the Season Array' });
+  }
+});
+
+
+// #############################################################################
+// ############################ SENDGRID EMAILS ################################
+// #############################################################################
 
 // Endpoint to send OTP
 app.post('/send-otp', async (req, res) => {
