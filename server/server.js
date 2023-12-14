@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
-const { getSeasonTicketSeatsArray } = require('./firebase/firebase.js');
+const { getSeasonTicketSeatsArray, getCollectibleOrdersReport} = require('./firebase/firebase.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -129,24 +129,39 @@ app.post('/webhook', async (req, res) => {
 // ############################ FIREBASE ACTIONS ###############################
 // #############################################################################
 
-app.post('/get-season-seats-array', async (req, res) => {
-  console.log('Requesting Array', req.body)
-  const { season } = req.body;
+// app.post('/get-season-seats-array', async (req, res) => {
+//   console.log('Requesting Array', req.body)
+//   const { season } = req.body;
 
-  if (!season) {
-    return res.status(400).json({ error: 'Season is required' });
-  }
+//   if (!season) {
+//     return res.status(400).json({ error: 'Season is required' });
+//   }
 
-  const seasonArr = await getSeasonTicketSeatsArray(season);
-  console.log('Array received', seasonArr)
+//   const seasonArr = await getSeasonTicketSeatsArray(season);
+//   console.log('Array received', seasonArr)
 
-  if (seasonArr) {
-    res.status(200).json({ seasonArr: seasonArr, message: 'Season Array received successfully'});
+//   if (seasonArr) {
+//     res.status(200).json({ seasonArr: seasonArr, message: 'Season Array received successfully'});
+//   } else {
+//     res.status(500).json({ error: 'There was an error getting the Season Array' });
+//   }
+// });
+
+app.get('/get-collectible-orders', async (req, res) => {
+
+  const collectibleOrders = await getCollectibleOrdersReport().then((result) => {
+    return result;
+  }).catch((error) => {
+    console.log(error);
+    return null;
+  });
+
+  if (collectibleOrders) {
+    res.status(200).json({ collectibleOrders: collectibleOrders, message: 'Collectible Orders received successfully'});
   } else {
-    res.status(500).json({ error: 'There was an error getting the Season Array' });
+    res.status(500).json({ error: 'There was an error getting the Collectible Orders' });
   }
 });
-
 
 // #############################################################################
 // ############################ SENDGRID EMAILS ################################
