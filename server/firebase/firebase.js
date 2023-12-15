@@ -19,27 +19,46 @@ module.exports = {
         })
         return seasonArr;
     },
-    async getCollectibleOrdersReport() {
+    async getCollectibleOrdersReport(queryParams) {
         try {
-            const collectibleOrdersSnapshot = await db.collection('collectible_orders').get();
-            const collectibleOrders = collectibleOrdersSnapshot.docs.map(doc => doc.data());
+            const toDateEndOfDayToTimestamp = new Date(new Date(parseInt(queryParams.to_date))
+                                                        .setHours(23, 59, 59, 999))
+                                                        .getTime();
 
-            const uniqueUserIds = [...new Set(collectibleOrders.map(order => order.user_id))];
+            const collectibleOrdersSnapshot = await db.collection('collectible_orders')
+                                                    .where('created', '>=', parseInt(queryParams.from_date))
+                                                    .where('created', '<=',parseInt(toDateEndOfDayToTimestamp))
+                                                    .orderBy('created', 'desc')
+                                                    .get();
 
-            const usersSnapshot = await db.collection('users').where('uid', 'in', uniqueUserIds).get();
-            const users = usersSnapshot.docs.map(doc => doc.data());
+            if (collectibleOrdersSnapshot.empty) {
+                return [];
+            } else {
+                const collectibleOrders = collectibleOrdersSnapshot.docs.map(doc => doc.data());
 
-            const collectibleOrdersWithUsers = collectibleOrders.map(order => ({
-                ...order,
-                user: users.find(user => user.uid === order.user_id)
-            }));
+                const uniqueUserIds = [...new Set(collectibleOrders.map(order => order.user_id))];
 
-            const separateItems = collectibleOrdersWithUsers.reduce((acc, order) => {
-                order.items.forEach(item => acc.push({...order,items: [item]}));
-                return acc;
-            }, []);
+                const usersSnapshot = await db.collection('users').where('uid', 'in', uniqueUserIds).get();
+                const users = usersSnapshot.docs.map(doc => doc.data());
 
-            return separateItems;
+                const collectibleOrdersWithUsers = collectibleOrders.map(order => ({
+                    ...order,
+                    user: users.find(user => user.uid === order.user_id)
+                }));
+
+                let collectibleOrdersWithSeparatedItems = collectibleOrdersWithUsers.reduce((acc, order) => {
+                    order.items.forEach(item => acc.push({...order,item: item}));
+                    return acc;
+                }, []);
+
+                if (queryParams.collectible_name && queryParams.collectible_name.toLowerCase() !== 'all') {
+                    collectibleOrdersWithSeparatedItems = collectibleOrdersWithSeparatedItems.filter(order =>
+                        order.item.name === queryParams.collectible_name
+                    );
+                }
+
+                return collectibleOrdersWithSeparatedItems;
+            }
         } catch (error) {
             console.log(error);
             return null;

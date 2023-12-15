@@ -148,8 +148,8 @@ app.post('/webhook', async (req, res) => {
 // });
 
 app.get('/get-collectible-orders', async (req, res) => {
-
-  const collectibleOrders = await getCollectibleOrdersReport().then((result) => {
+  const queryParams = req.query;
+  const collectibleOrders = await getCollectibleOrdersReport(queryParams).then((result) => {
     return result;
   }).catch((error) => {
     console.log(error);
