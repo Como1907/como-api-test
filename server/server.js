@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport} = require('./firebase/firebase.js');
+const { getPlanetToken } = require('./planet/index.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -160,6 +161,20 @@ app.get('/get-collectible-orders', async (req, res) => {
     res.status(200).json({ collectibleOrders: collectibleOrders, message: 'Collectible Orders received successfully'});
   } else {
     res.status(500).json({ error: 'There was an error getting the Collectible Orders' });
+  }
+});
+
+// #############################################################################
+// ############################ PLANET ACTIONS ###############################
+// #############################################################################
+
+app.get('/get-planet-token', async (req, res) => {
+  const planetToken = await getPlanetToken();
+
+  if (planetToken) {
+    res.status(200).json({ planetToken: planetToken, message: 'Get Planet Token successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error getting the Planet Token' });
   }
 });
 
