@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport} = require('./firebase/firebase.js');
-const { getPlanetToken } = require('./planet/index.js');
+const { getPlanetToken, getPlanetData } = require('./planet/index.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -178,6 +178,15 @@ app.get('/get-planet-token', async (req, res) => {
   }
 });
 
+app.get('/get-planet-data', async (req, res) => {
+  const planetData = await getPlanetData(req.query.token);
+  console.log('planetData', planetData)
+  if (planetData) {
+    res.status(200).json({ planetData: planetData, message: 'Get Planet Data successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error getting the Planet Data' });
+  }
+});
 // #############################################################################
 // ############################ SENDGRID EMAILS ################################
 // #############################################################################
