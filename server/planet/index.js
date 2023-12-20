@@ -30,16 +30,15 @@ const getPlanetToken = async () => {
 
 const getPlanetData = async (token) => {
   // Ensure the URL is correctly formatted and encoded
-
   const plannetAccessToken = JSON.parse(localStorage.getItem('plannet_access_token'))
   console.log("plannetAccessToken", plannetAccessToken)
   const baseUrl = 'https://mfapi-06.ticka.it/api/Evento/Eventi';
   const queryParams = new URLSearchParams({
-    // organizzatoreId: '4',
-    // periodoInizio: '2012-01-01T00:00:00',
-    // periodoFine: '2012-12-01T00:00:00',
-    // codiceLocale: '0410170250606',
-    // tipoMappa: '2'
+    organizzatoreId: 1,
+    periodoInizio: '2023-08-01T00:00:00',
+    periodoFine: '2024-06-01T00:00:00',
+    codiceLocale: '0400250224888',
+    tipoMappa: 0
   });
   const url = `${baseUrl}?${queryParams.toString()}`;
   console.log("url", url)
