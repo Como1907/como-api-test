@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport} = require('./firebase/firebase.js');
-const { getPlanetToken, getPlanetData } = require('./planet/index.js');
+const { getPlanetToken, getPlanetEvents } = require('./planet/index.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
