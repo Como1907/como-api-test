@@ -167,26 +167,34 @@ app.get('/get-collectible-orders', async (req, res) => {
 // #############################################################################
 // ############################ PLANET ACTIONS ###############################
 // #############################################################################
-
 app.get('/get-planet-token', async (req, res) => {
-  const planetToken = await getPlanetToken();
+  const result = await getPlanetToken();
 
-  if (planetToken) {
-    res.status(200).json({ planetToken: planetToken, message: 'Get Planet Token successfully'});
+  if (result.success) {
+    res.status(200).json({ data: result.data });
   } else {
-    res.status(500).json({ error: 'There was an error getting the Planet Token' });
+    res.status(500).json({
+      error: result.error
+    });
   }
 });
 
-app.get('/get-planet-data', async (req, res) => {
-  const planetData = await getPlanetData(req.query.token);
-  console.log('planetData', planetData)
-  if (planetData) {
-    res.status(200).json({ planetData: planetData, message: 'Get Planet Data successfully'});
+app.get('/planet-events', async (req, res) => {
+  const response = await getPlanetEvents();
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
   } else {
-    res.status(500).json({ error: 'There was an error getting the Planet Data' });
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
   }
 });
+
 // #############################################################################
 // ############################ SENDGRID EMAILS ################################
 // #############################################################################

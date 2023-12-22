@@ -4,65 +4,77 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   localStorage = new LocalStorage('./scratch');
 }
 
+const baseURL = 'https://mfapi-06.ticka.it/api'
+const axiosClient = axios.create({
+  baseURL: baseURL,
+  headers: {
+    accept: '*/*',
+    'Content-Type': 'application/json',
+  },
+})
+
 const getPlanetToken = async () => {
-  const url = 'https://mfapi-06.ticka.it/api/Account/GetToken';
-  const data = {
+  const params = {
     userName: process.env.PLANET_AUTH_USERNAME,
     password: process.env.PLANET_AUTH_PASSWORD
   };
-  const config = {
-    headers: {
-      accept: '*/*',
-      'Content-Type': 'application/json',
-    },
-  };
 
   try {
-    const response = await axios.post(url, data, config);
-    console.log('Token:', response.data);
-    localStorage.setItem('plannet_access_token', JSON.stringify(response.data));
-    return response.data;
+    const response = await axiosClient.post('/Account/GetToken', params);
+
+    if (!!response.data?.token) {
+      localStorage.setItem('plannet_access_token', JSON.stringify(response.data));
+      return {
+        success: true,
+        data: response.data
+      };
+    } else {
+      return {
+        success: false,
+        error: response.data
+      };
+    }
   } catch (error) {
     console.error('Error in getting token:', error);
-    return null;
+    return {
+      success: false,
+      error: error
+    };
   }
 };
 
-const getPlanetData = async (token) => {
-  // Ensure the URL is correctly formatted and encoded
-  const plannetAccessToken = JSON.parse(localStorage.getItem('plannet_access_token'))
-  console.log("plannetAccessToken", plannetAccessToken)
-  const baseUrl = 'https://mfapi-06.ticka.it/api/Evento/Eventi';
-  const queryParams = new URLSearchParams({
-    organizzatoreId: 1,
-    periodoInizio: '2023-08-01T00:00:00',
-    periodoFine: '2024-06-01T00:00:00',
-    codiceLocale: '0400250224888',
-    tipoMappa: 0
-  });
-  const url = `${baseUrl}?${queryParams.toString()}`;
-  console.log("url", url)
+const getPlanetEvents = async (token) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
 
-  const config = {
-    headers: {
-      accept: '*/*',
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${plannetAccessToken.token}`
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
     }
-  };
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
 
   try {
-    const response = await axios.get(url, config);
+    const response = await axiosClient.get('/Evento/Eventi', {
+      params: {
+        periodoInizio: '2023-08-01T00:00:00',
+        periodoFine: '2024-06-01T00:00:00',
+        tipoMappa: 0
+      }
+    });
 
-    console.log('Status', response.status);
-    console.log('Data', response.data);
-
-    return response.data;
+    return {
+      success: true,
+      data: response.data
+    };
   } catch (error) {
-    console.error('Error in getting planet data:', error);
-    return null;
+    return {
+      success: false,
+      error: error
+    };
   }
 };
 
 
-module.exports = { getPlanetToken, getPlanetData };
+module.exports = { getPlanetToken, getPlanetEvents };
