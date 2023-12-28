@@ -130,23 +130,23 @@ app.post('/webhook', async (req, res) => {
 // ############################ FIREBASE ACTIONS ###############################
 // #############################################################################
 
-// app.post('/get-season-seats-array', async (req, res) => {
-//   console.log('Requesting Array', req.body)
-//   const { season } = req.body;
+app.post('/get-season-seats-array', async (req, res) => {
+  console.log('Requesting Array', req.body)
+  const { season } = req.body;
 
-//   if (!season) {
-//     return res.status(400).json({ error: 'Season is required' });
-//   }
+  if (!season) {
+    return res.status(400).json({ error: 'Season is required' });
+  }
 
-//   const seasonArr = await getSeasonTicketSeatsArray(season);
-//   console.log('Array received', seasonArr)
+  const seasonArr = await getSeasonTicketSeatsArray(season);
+  console.log('Array received', seasonArr)
 
-//   if (seasonArr) {
-//     res.status(200).json({ seasonArr: seasonArr, message: 'Season Array received successfully'});
-//   } else {
-//     res.status(500).json({ error: 'There was an error getting the Season Array' });
-//   }
-// });
+  if (seasonArr) {
+    res.status(200).json({ seasonArr: seasonArr, message: 'Season Array received successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error getting the Season Array' });
+  }
+});
 
 app.get('/get-collectible-orders', async (req, res) => {
   const queryParams = req.query;
