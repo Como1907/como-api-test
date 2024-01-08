@@ -76,5 +76,33 @@ const getPlanetEvents = async (token) => {
   }
 };
 
+// params: similar to: https://mfapi-06.ticka.it/swagger/index.html => /api/Utenza/AddPersona
+const createUser = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
 
-module.exports = { getPlanetToken, getPlanetEvents };
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.post('/Utenza/AddPersona', params);
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+
+module.exports = { getPlanetToken, getPlanetEvents, createUser };
