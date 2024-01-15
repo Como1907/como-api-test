@@ -95,8 +95,11 @@ const createUser = async (params) => {
       const response = await axiosClient.post('/Utenza/AddPersona', param);
       results.push({
         success: true,
-        data: response.data,
-        param
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          persona_id: response.data.id
+        }
       });
     } catch (error) {
       results.push({
