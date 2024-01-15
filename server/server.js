@@ -196,17 +196,23 @@ app.get('/planet-events', async (req, res) => {
 });
 
 app.post('/users', async (req, res) => {
-  const response = await createUser(req.body);
+  const responses = await createUser(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
 
-  if (response.success) {
+  if (allSuccessful) {
     res.status(200).json({
-      data: response.data,
+      data: responses.map(response => response.data),
       success: true
     });
   } else {
+    const successfulCreations = responses.filter(response => response.success).map(response => response.data);
+    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
     res.status(500).json({
       success: false,
-      error: 'There was an error getting the Planet Data'
+      successfulCreations: successfulCreations,
+      failedCreations: failedCreations,
+      error: 'There was an error processing one or more user creations'
     });
   }
 });
