@@ -79,6 +79,7 @@ const getPlanetEvents = async (token) => {
 // params: similar to: https://mfapi-06.ticka.it/swagger/index.html => /api/Utenza/AddPersona
 const createUser = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
 
   if (!plannetAccessTokenResponse.success) {
     return {
@@ -88,21 +89,29 @@ const createUser = async (params) => {
   }
 
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
-
-  try {
-    const response = await axiosClient.post('/Utenza/AddPersona', params);
-
-    return {
-      success: true,
-      data: response.data
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: error
-    };
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.post('/Utenza/AddPersona', param);
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          persona_id: response.data.id
+        }
+      });
+    } catch (error) {
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
   }
-};
+
+  return results;
+}
 
 
 module.exports = { getPlanetToken, getPlanetEvents, createUser };
