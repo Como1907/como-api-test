@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
-const { getSeasonTicketSeatsArray, getCollectibleOrdersReport} = require('./firebase/firebase.js');
+const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { getPlanetToken, getPlanetEvents, createUser } = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -161,6 +161,22 @@ app.get('/get-collectible-orders', async (req, res) => {
     res.status(200).json({ collectibleOrders: collectibleOrders, message: 'Collectible Orders received successfully'});
   } else {
     res.status(500).json({ error: 'There was an error getting the Collectible Orders' });
+  }
+});
+
+app.get('/get-single-tickets', async (req, res) => {
+  const queryParams = req.query;
+  const singleTickets = await getSingleTickets(queryParams).then((result) => {
+    return result;
+  }).catch((error) => {
+    console.log(error);
+    return null;
+  });
+
+  if (singleTickets) {
+    res.status(200).json({ singleTickets: singleTickets, message: 'Single Tickets for fixture received successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error getting the Single Tickets' });
   }
 });
 

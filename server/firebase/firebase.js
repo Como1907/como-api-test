@@ -19,6 +19,7 @@ module.exports = {
         })
         return seasonArr;
     },
+
     async getCollectibleOrdersReport(queryParams) {
         try {
             const toDateEndOfDayToTimestamp = new Date(new Date(parseInt(queryParams.to_date))
@@ -58,6 +59,50 @@ module.exports = {
                 }
 
                 return collectibleOrdersWithSeparatedItems;
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    },
+
+    async getSingleTickets(queryParams) {
+        console.log(queryParams.fixture_id)
+        try {
+            const querySnapshot = await db.collection('fixtures_seats_reserved')
+                                                    .where('fixture_id', '==', queryParams.fixture_id)
+                                                    .where('payment_status', '==', parseInt(queryParams.status))
+                                                    .orderBy('created', 'desc')
+                                                    .get();
+
+            if (querySnapshot.empty) {
+                return [];
+            } else {
+                console.log(querySnapshot.size)
+                const singleTickets = querySnapshot.docs.map(doc => doc.data());
+
+                const uniqueUserIds = [...new Set(singleTickets.map(ticket => ticket.uid))];
+
+                const usersSnapshot = await db.collection('users').where('uid', 'in', uniqueUserIds).get();
+                const users = usersSnapshot.docs.map(doc => doc.data());
+
+                const singleTicketsWithUsers = singleTickets.map(ticket => ({
+                    ...ticket,
+                    user: users.find(user => user.uid === ticket.uid)
+                }));
+
+                /* let singleTicketsWithSeparatedItems = singleTicketsWithUsers.reduce((acc, ticket) => {
+                    ticket.items.forEach(item => acc.push({...ticket,item: item}));
+                    return acc;
+                }, []); */
+
+                /* if (queryParams.collectible_name && queryParams.collectible_name.toLowerCase() !== 'all') {
+                    singleTicketsWithSeparatedItems = singleTicketsWithSeparatedItems.filter(ticket =>
+                        order.item.name === queryParams.collectible_name
+                    );
+                } */
+
+                return singleTicketsWithUsers;
             }
         } catch (error) {
             console.log(error);

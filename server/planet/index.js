@@ -58,7 +58,7 @@ const getPlanetEvents = async (token) => {
   try {
     const response = await axiosClient.get('/Evento/Eventi', {
       params: {
-        periodoInizio: '2023-08-01T00:00:00',
+        periodoInizio: '2024-01-01T00:00:00',
         periodoFine: '2024-06-01T00:00:00',
         tipoMappa: 0
       }
