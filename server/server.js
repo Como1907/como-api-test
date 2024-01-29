@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
-const { getPlanetToken, getPlanetEvents, createUser } = require('./planet/index.js');
+const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, createUser } = require('./planet/index.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -197,6 +197,26 @@ app.get('/get-planet-token', async (req, res) => {
 
 app.get('/planet-events', async (req, res) => {
   const response = await getPlanetEvents();
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+
+app.get('/planet-posti-liberi-biglietto', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getPostiLiberiBiglietto(req.query);
 
   if (response.success) {
     res.status(200).json({

@@ -76,6 +76,38 @@ const getPlanetEvents = async (token) => {
   }
 };
 
+const getPostiLiberiBiglietto = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/Mappa/PostiLiberiBiglietto', {
+      params: {
+        eventoId: parseInt(params.eventoId),
+        bloccoId: parseInt(params.bloccoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
 // params: similar to: https://mfapi-06.ticka.it/swagger/index.html => /api/Utenza/AddPersona
 const createUser = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
@@ -114,4 +146,4 @@ const createUser = async (params) => {
 }
 
 
-module.exports = { getPlanetToken, getPlanetEvents, createUser };
+module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, createUser };
