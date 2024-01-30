@@ -21,6 +21,7 @@
     "express-basic-auth": "^1.2.1",
     "firebase-admin": "^11.11.1",
     "node-localstorage": "^3.0.5",
-    "stripe": "^8.191.0"
+    "stripe": "^8.191.0",
+    "twilio": "^4.21.0"
   }
 }

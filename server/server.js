@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, createUser } = require('./planet/index.js');
+const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -232,6 +233,7 @@ app.get('/planet-posti-liberi-biglietto', async (req, res) => {
 });
 
 app.post('/users', async (req, res) => {
+  console.log('Creating users', req.body.params)
   const responses = await createUser(req.body.params);
   const allSuccessful = responses.every(response => response.success);
 
@@ -253,6 +255,51 @@ app.post('/users', async (req, res) => {
   }
 });
 
+
+// #############################################################################
+// ############################ TWILIO SMS #####################################
+// #############################################################################
+app.post('/send-sms-otp', async (req, res) => {
+  console.log('Sending SMS',req.body)
+  const { phone } = req.body.params;
+
+  if (!phone) {
+    return res.status(400).json({ message: 'Phone number is required.' });
+  }
+
+  try {
+    const verification = await sendSmsOtp(phone);
+    console.log('verification', verification)
+    if (verification.status === 'pending') {
+      res.status(200).json({ message: 'SMS sent successfully.' });
+    } else {
+      res.status(422).json({ message: 'Unable to send SMS. Please try again later.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error while sending SMS.' });
+  }
+});
+
+app.post('/verify-sms-otp', async (req, res) => {
+  console.log('Verifying SMS',req.body)
+  const { phone, code } = req.body.params;
+
+  if (!phone || !code) {
+    return res.status(400).json({ message: 'Both phone number and verification code are required.' });
+  }
+
+  try {
+    const verificationCheck = await verifySmsOtp(phone, code);
+    console.log('verificationCheck', verificationCheck)
+    if (verificationCheck.status === 'approved') {
+      res.status(200).json({ message: 'SMS verified successfully.' });
+    } else {
+      res.status(422).json({ message: 'Verification failed. The code might be incorrect or expired.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error while verifying SMS.' });
+  }
+});
 // #############################################################################
 // ############################ SENDGRID EMAILS ################################
 // #############################################################################
@@ -261,7 +308,7 @@ app.post('/users', async (req, res) => {
 app.post('/send-otp', async (req, res) => {
   console.log('Sending email',req.body)
   const { email } = req.body;
-  const saltRounds = 10;
+  const saltRounds = 10; 
   const otp = Math.floor(100000 + Math.random() * 900000);
   const hashedOtp = await bcrypt.hash(otp.toString(), saltRounds);
 
