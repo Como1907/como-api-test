@@ -108,6 +108,105 @@ const getPostiLiberiBiglietto = async (params) => {
   }
 };
 
+// Get Seat Info
+const getMappaPostoInfo = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/Mappa/PostoInfo', {
+      params: {
+        eventoId: parseInt(params.eventoId),
+        postoId: parseInt(params.postoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+// Block Seat
+const getMappaBloccaPosto = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/Mappa/BloccaPosto', {
+      params: {
+        eventoId: parseInt(params.eventoId),
+        postoId: parseInt(params.postoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+// Block Seat
+const getMappaSbloccaPosto = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/Mappa/SbloccaPosto', {
+      params: {
+        eventoId: parseInt(params.eventoId),
+        postoId: parseInt(params.postoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
 // params: similar to: https://mfapi-06.ticka.it/swagger/index.html => /api/Utenza/AddPersona
 const createUser = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
@@ -146,4 +245,4 @@ const createUser = async (params) => {
 }
 
 
-module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, createUser };
+module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getMappaPostoInfo, getMappaBloccaPosto, getMappaSbloccaPosto, createUser };

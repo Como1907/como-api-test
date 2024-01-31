@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
-const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, createUser } = require('./planet/index.js');
 const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
+const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getMappaPostoInfo, getMappaBloccaPosto, getMappaSbloccaPosto, createUser } = require('./planet/index.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -218,6 +218,67 @@ app.get('/planet-posti-liberi-biglietto', async (req, res) => {
   console.log('request params')
   console.log(req.query)
   const response = await getPostiLiberiBiglietto(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+
+// Get Seat Info - stato: 1 ?? , 2 Blocked, 3 Free
+app.get('/planet-mappa-postoInfo', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getMappaPostoInfo(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+// Lock Seat
+app.get('/planet-mappa-bloccaposto', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getMappaBloccaPosto(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+// Unlock Seat
+app.get('/planet-mappa-sbloccaposto', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getMappaSbloccaPosto(req.query);
 
   if (response.success) {
     res.status(200).json({
