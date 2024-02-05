@@ -4,7 +4,7 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   localStorage = new LocalStorage('./scratch');
 }
 
-const baseURL = 'https://mfapi-06.ticka.it/api'
+const baseURL = 'https://mfapi-06.ticka.it'
 const axiosClient = axios.create({
   baseURL: baseURL,
   headers: {
@@ -20,7 +20,7 @@ const getPlanetToken = async () => {
   };
 
   try {
-    const response = await axiosClient.post('/Account/GetToken', params);
+    const response = await axiosClient.post('/api/Account/GetToken', params);
 
     if (!!response.data?.token) {
       localStorage.setItem('plannet_access_token', JSON.stringify(response.data));
@@ -56,7 +56,7 @@ const getPlanetEvents = async (token) => {
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
 
   try {
-    const response = await axiosClient.get('/Evento/Eventi', {
+    const response = await axiosClient.get('/api/Evento/Eventi', {
       params: {
         periodoInizio: '2024-01-01T00:00:00',
         periodoFine: '2024-06-01T00:00:00',
@@ -89,7 +89,7 @@ const getPostiLiberiBiglietto = async (params) => {
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
 
   try {
-    const response = await axiosClient.get('/Mappa/PostiLiberiBiglietto', {
+    const response = await axiosClient.get('/api/Mappa/PostiLiberiBiglietto', {
       params: {
         eventoId: parseInt(params.eventoId),
         bloccoId: parseInt(params.bloccoId)
@@ -108,7 +108,7 @@ const getPostiLiberiBiglietto = async (params) => {
   }
 };
 
-// Get Seat Info
+// Get Seat Info for Seats that are free to issue a Ticket
 const getMappaPostoInfo = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
 
@@ -122,10 +122,43 @@ const getMappaPostoInfo = async (params) => {
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
 
   try {
-    const response = await axiosClient.get('/Mappa/PostoInfo', {
+    const response = await axiosClient.get('/api/Mappa/PostoInfo', {
       params: {
         eventoId: parseInt(params.eventoId),
         postoId: parseInt(params.postoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+// Get Seat Info for section with status and label
+const getMappaPostiInfo = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Mappa/PostiInfo', {
+      params: {
+        eventoId: parseInt(params.eventoId),
+        bloccoId: parseInt(params.bloccoId)
       }
     });
 
@@ -155,10 +188,11 @@ const getMappaBloccaPosto = async (params) => {
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
 
   try {
-    const response = await axiosClient.get('/Mappa/BloccaPosto', {
+    const response = await axiosClient.get('/api/Mappa/BloccaPosto', {
       params: {
         eventoId: parseInt(params.eventoId),
-        postoId: parseInt(params.postoId)
+        postoId: parseInt(params.postoId),
+        minuti: parseInt(params.minuti)
       }
     });
 
@@ -188,12 +222,93 @@ const getMappaSbloccaPosto = async (params) => {
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
 
   try {
-    const response = await axiosClient.get('/Mappa/SbloccaPosto', {
+    const response = await axiosClient.get('/api/Mappa/SbloccaPosto', {
       params: {
         eventoId: parseInt(params.eventoId),
         postoId: parseInt(params.postoId)
       }
     });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+const getPlanetNazioni = async (token) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/nazioni');
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+getPlanetProvince = async (token) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/province');
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+getPlanetComuni = async (token) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/comuni');
 
     return {
       success: true,
@@ -223,7 +338,7 @@ const createUser = async (params) => {
   
   for (const param of params) {
     try {
-      const response = await axiosClient.post('/Utenza/AddPersona', param);
+      const response = await axiosClient.post('/api/Utenza/AddPersona', param);
       results.push({
         success: true,
         dataPlanet: response.data,
@@ -245,4 +360,7 @@ const createUser = async (params) => {
 }
 
 
-module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getMappaPostoInfo, getMappaBloccaPosto, getMappaSbloccaPosto, createUser };
+module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
+                   getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
+                   getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
+                   getPlanetComuni, createUser };

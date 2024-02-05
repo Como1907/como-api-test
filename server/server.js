@@ -2,7 +2,11 @@ const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
-const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getMappaPostoInfo, getMappaBloccaPosto, getMappaSbloccaPosto, createUser } = require('./planet/index.js');
+const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
+        getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
+        getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
+        getPlanetComuni, createUser }
+        = require('./planet/index.js');
 const express = require('express');
 const app = express();
 const {resolve} = require('path');
@@ -70,7 +74,7 @@ app.post('/create-payment-intent', async (req, res) => {
       currency: 'EUR',
       amount: amount,
       description: description,
-      automatic_payment_methods: { enabled: false }
+      automatic_payment_methods: { enabled: true }
     });
 
     // Send publishable key and PaymentIntent details to client
@@ -233,12 +237,32 @@ app.get('/planet-posti-liberi-biglietto', async (req, res) => {
 });
 
 
-// Get Seat Info - stato: 1 ?? , 2 Blocked, 3 Free
+// Get Seat Info
 app.get('/planet-mappa-postoInfo', async (req, res) => {
 
   console.log('request params')
   console.log(req.query)
   const response = await getMappaPostoInfo(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+// Get Seat Info - Stato: 0, Free, stato: 1 Sold/Reserved/Issued , 2 Blocked, 3 Free
+app.get('/planet-mappa-postiinfo', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getMappaPostiInfo(req.query);
 
   if (response.success) {
     res.status(200).json({
@@ -279,6 +303,54 @@ app.get('/planet-mappa-sbloccaposto', async (req, res) => {
   console.log('request params')
   console.log(req.query)
   const response = await getMappaSbloccaPosto(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+app.get('/planet-nazioni', async (req, res) => {
+  const response = await getPlanetNazioni();
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+app.get('/planet-province', async (req, res) => {
+  const response = await getPlanetProvince();
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+app.get('/planet-comuni', async (req, res) => {
+  const response = await getPlanetComuni();
 
   if (response.success) {
     res.status(200).json({
