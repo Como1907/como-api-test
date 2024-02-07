@@ -5,7 +5,8 @@ const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
         getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
         getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
-        getPlanetComuni, getPlaNetSeasonTickets, createUser }
+        getPlanetComuni, getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
+        createUser }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -230,6 +231,23 @@ app.get('/abbonamento-tipiabbonamento', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'There was an error getting the PlaNet Season Tickets'
+    });
+  }
+});
+
+app.get('/abbonamento-ordiniposto', async (req, res) => {
+  
+  const response = await getPlaNetSeasonTribunas(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the PlaNet Season Tribunas'
     });
   }
 });
