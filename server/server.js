@@ -5,7 +5,7 @@ const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
         getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
         getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
-        getPlanetComuni, createUser }
+        getPlanetComuni, getPlaNetSeasonTickets, createUser }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -28,6 +28,7 @@ app.use(basicAuth({
   challenge: true,
 }));
 
+// process.env.STRIPE_SECRET_KEY_FOUNDATION
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2020-08-27',
   appInfo: { // For sample support and debugging, not required for production:
@@ -216,6 +217,22 @@ app.get('/planet-events', async (req, res) => {
   }
 });
 
+app.get('/abbonamento-tipiabbonamento', async (req, res) => {
+  
+  const response = await getPlaNetSeasonTickets(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the PlaNet Season Tickets'
+    });
+  }
+});
 
 app.get('/planet-posti-liberi-biglietto', async (req, res) => {
 
@@ -365,7 +382,7 @@ app.get('/planet-comuni', async (req, res) => {
   }
 });
 
-app.post('/users', async (req, res) => {
+app.post('/utenza-addpersona', async (req, res) => {
   console.log('Creating users', req.body.params)
   const responses = await createUser(req.body.params);
   const allSuccessful = responses.every(response => response.success);
