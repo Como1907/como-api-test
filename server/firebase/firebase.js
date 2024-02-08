@@ -2,10 +2,10 @@ const axios = require('axios');
 const { db } = require("../firebase");
 
 module.exports = {
-    async getSeasonTicketSeatsArray (season) {
+    async v (season) {
         //return 'firebase admin working'
         const query = db
-            .collection('season_tickets')
+            .collection('seasons')
             .doc(season)
             .collection('holders')
         const querySnapshot = await query.get();
