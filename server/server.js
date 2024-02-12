@@ -9,7 +9,7 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         getPlaNetSubscription, getPlanetsocietaSportiva, 
         createUser, checkVroTicketIssueEligible, issueTickets,
         getPlaNetTitoloStato, getPlaNetTitoloInfo,
-        getTesseraTifoso }
+        getTesseraTifoso, getPlanetSubscriptionAvailableSeat }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -221,6 +221,7 @@ app.get('/planet-events', async (req, res) => {
   }
 });
 
+//Get subscription type
 app.get('/abbonamento-tipiabbonamento', async (req, res) => {
   
   const response = await getPlaNetSeasonTickets(req.query);
@@ -238,6 +239,7 @@ app.get('/abbonamento-tipiabbonamento', async (req, res) => {
   }
 });
 
+//Get subscription tribuna
 app.get('/abbonamento-ordiniposto', async (req, res) => {
   
   const response = await getPlaNetSeasonTribunas(req.query);
@@ -255,9 +257,28 @@ app.get('/abbonamento-ordiniposto', async (req, res) => {
   }
 });
 
+//Get subscription pricing
 app.get('/abbonamento-codiciriduzione', async (req, res) => {
   
   const response = await getPlaNetSubscription(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the PlaNet Subscription'
+    });
+  }
+});
+
+//Get subscription getPlanetSubscriptionAvailableSeat
+app.get('/planet-posti-liberi-abbonamento', async (req, res) => {
+  console.log(req.query)
+  const response = await getPlanetSubscriptionAvailableSeat(req.query);
 
   if (response.success) {
     res.status(200).json({

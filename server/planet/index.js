@@ -171,6 +171,38 @@ const getPlaNetSubscription = async (params) => {
   }
 }
 
+const getPlanetSubscriptionAvailableSeat = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Mappa/PostiLiberiAbbonamento', {
+      params: {
+        tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId),
+        bloccoId: parseInt(params.bloccoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+}
+
 const getPostiLiberiBiglietto = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
 
@@ -683,5 +715,5 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
                    createUser, checkVroTicketIssueEligible, issueTickets,
                    getPlaNetTitoloStato, getPlaNetTitoloInfo,
-                   getTesseraTifoso, getPlaNetSubscription
+                   getTesseraTifoso, getPlaNetSubscription, getPlanetSubscriptionAvailableSeat
 };
