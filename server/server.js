@@ -6,8 +6,10 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
         getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
         getPlanetComuni, getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
-        getPlaNetSubscription,
-        createUser }
+        getPlaNetSubscription, getPlanetsocietaSportiva, 
+        createUser, checkVroTicketIssueEligible, issueTickets,
+        getPlaNetTitoloStato, getPlaNetTitoloInfo,
+        getTesseraTifoso }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -418,6 +420,23 @@ app.get('/planet-comuni', async (req, res) => {
   }
 });
 
+app.get('/planet-societa-sportiva', async (req, res) => {
+  const response = await getPlanetsocietaSportiva();
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+// Add Persona
 app.post('/utenza-addpersona', async (req, res) => {
   console.log('Creating users', req.body.params)
   const responses = await createUser(req.body.params);
@@ -436,11 +455,128 @@ app.post('/utenza-addpersona', async (req, res) => {
       success: false,
       successfulCreations: successfulCreations,
       failedCreations: failedCreations,
-      error: 'There was an error processing one or more user creations'
+      error: 'There was an error processing one or more user creations!'
+    });
+  }
+}); 
+
+// Check Supporter Card
+app.get('/tessera-tifoso', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getTesseraTifoso(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Supporter Card Info'
     });
   }
 });
 
+// Check VRO Ticket Eligibility
+app.post('/autorizzazione-verificapersona', async (req, res) => {
+  console.log('request params')
+  console.log(req.body.params)
+  const responses = await checkVroTicketIssueEligible(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
+
+  if (allSuccessful) {
+    res.status(200).json({
+      data: responses.map(response => response.data),
+      success: true
+    });
+  } else {
+    const successfulValidations = responses.filter(response => response.success).map(response => response.data);
+    const failedValidations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
+    res.status(500).json({
+      success: false,
+      successfulValidations: successfulValidations,
+      failedValidations: failedValidations,
+      error: 'There was an error processing one or more user creations!'
+    });
+  }
+}); 
+
+app.post('/biglietto-emettiesteso', async (req, res) => {
+  console.log('Issuing Tickets', req.body.params)
+  const responses = await issueTickets(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
+
+  if (allSuccessful) {
+    res.status(200).json({
+      data: responses.map(response => response.data),
+      success: true
+    });
+  } else {
+    const successfulCreations = responses.filter(response => response.success).map(response => response.data);
+    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
+    res.status(500).json({
+      success: false,
+      successfulCreations: successfulCreations,
+      failedCreations: failedCreations,
+      error: 'There was an error processing one or more ticket issuing!'
+    });
+  }
+});
+
+// Get the Issued Ticket Title Stato - Barcode etc.
+app.post('/titolo-stato', async (req, res) => {
+
+  console.log('Getting Titolo Stato', req.body.params)
+  const responses = await getPlaNetTitoloStato(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
+
+  if (allSuccessful) {
+    res.status(200).json({
+      data: responses.map(response => response.data),
+      success: true
+    });
+  } else {
+    const successfulCreations = responses.filter(response => response.success).map(response => response.data);
+    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
+    res.status(500).json({
+      success: false,
+      successfulCreations: successfulCreations,
+      failedCreations: failedCreations,
+      error: 'There was an errorgetting the Titolo Stato!'
+    });
+  }
+});
+
+// Get the Issued Ticket Title Stato - Fiscal Seal etc.
+app.post('/titolo-info', async (req, res) => {
+
+  console.log('Getting Titolo Info', req.body.params)
+  const responses = await getPlaNetTitoloInfo(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
+
+  if (allSuccessful) {
+    res.status(200).json({
+      data: responses.map(response => response.data),
+      success: true
+    });
+  } else {
+    const successfulCreations = responses.filter(response => response.success).map(response => response.data);
+    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
+    res.status(500).json({
+      success: false,
+      successfulCreations: successfulCreations,
+      failedCreations: failedCreations,
+      error: 'There was an errorgetting the Titolo Info!'
+    });
+  }
+});
 
 // #############################################################################
 // ############################ TWILIO SMS #####################################

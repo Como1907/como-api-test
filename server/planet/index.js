@@ -417,6 +417,33 @@ getPlanetComuni = async (token) => {
   }
 };
 
+getPlanetsocietaSportiva = async (token) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/societaSportiva');
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
 // params: similar to: https://mfapi-06.ticka.it/swagger/index.html => /api/Utenza/AddPersona
 const createUser = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
@@ -432,6 +459,7 @@ const createUser = async (params) => {
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
   
   for (const param of params) {
+    // selete param.supporter_card
     try {
       const response = await axiosClient.post('/api/Utenza/AddPersona', param);
       results.push({
@@ -454,9 +482,206 @@ const createUser = async (params) => {
   return results;
 }
 
+const checkVroTicketIssueEligible = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.get('/api/Autorizzazione/VerificaPersona', {
+        params: {
+          personaId: parseInt(param.persona_id),
+          puntovenditaId: 10,
+          isAbbonamento: false
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          is_eligible: response.data.risultato
+        }
+      });
+    } catch (error) {
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
+// Check Supporter Card
+getTesseraTifoso = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/TesseraTifoso/Get', {
+      params: {
+        codiceFiscaleSocieta: params.codiceFiscaleSocieta,
+        codiceTesseraTifoso: params.codiceTesseraTifoso
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+const issueTickets = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.post('/api/Biglietto/EmettiEsteso', param);
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          ticket_issue_response: response.data
+        }
+      });
+    } catch (error) {
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
+getPlaNetTitoloStato = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.get('/api/Titolo/Stato', {
+        params: {
+          id: parseInt(param.ticket_issue_response.id),
+          eventoId: parseInt(param.modelloBiglietto.eventoId),
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          titolo_stato: response.data
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
+getPlaNetTitoloInfo = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.get('/api/Titolo/Info', {
+        params: {
+          id: parseInt(param.ticket_issue_response.id)
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          titolo_info: response.data
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
 module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
                    getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
                    getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
-                   getPlanetComuni, getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
-                   getPlaNetSubscription,
-                   createUser };
+                   getPlanetComuni, getPlanetsocietaSportiva,
+                   getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
+                   createUser, checkVroTicketIssueEligible, issueTickets,
+                   getPlaNetTitoloStato, getPlaNetTitoloInfo,
+                   getTesseraTifoso, getPlaNetSubscription
+};
