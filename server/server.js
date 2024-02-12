@@ -6,6 +6,7 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
         getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
         getPlanetComuni, getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
+        getPlaNetSubscription,
         createUser }
         = require('./planet/index.js');
 const express = require('express');
@@ -248,6 +249,23 @@ app.get('/abbonamento-ordiniposto', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'There was an error getting the PlaNet Season Tribunas'
+    });
+  }
+});
+
+app.get('/abbonamento-codiciriduzione', async (req, res) => {
+  
+  const response = await getPlaNetSubscription(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the PlaNet Subscription'
     });
   }
 });

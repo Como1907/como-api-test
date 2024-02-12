@@ -138,6 +138,39 @@ const getPlaNetSeasonTribunas = async (params) => {
   }
 };
 
+const getPlaNetSubscription = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Abbonamento/Codiciriduzione', {
+      params: {
+        tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId),
+        codiceOrdinePosto: params.codiceOrdinePosto,
+        visibilita: 2
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+}
+
 const getPostiLiberiBiglietto = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
 
@@ -425,4 +458,5 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
                    getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
                    getPlanetComuni, getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
+                   getPlaNetSubscription,
                    createUser };
