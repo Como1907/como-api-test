@@ -5,11 +5,13 @@ const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
         getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
         getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
-        getPlanetComuni, getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
-        getPlaNetSubscription, getPlanetsocietaSportiva, 
-        createUser, checkVroTicketIssueEligible, issueTickets,
-        getPlaNetTitoloStato, getPlaNetTitoloInfo,
-        getTesseraTifoso, getPlanetSubscriptionAvailableSeat }
+        getPlanetComuni, getPlanetsocietaSportiva,
+        getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
+        createUser, checkVroTicketIssueEligible, issueSingleMatchTickets,
+        getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
+        getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
+        tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
+        getPlanetSubscriptionAvailableSeat }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -260,7 +262,7 @@ app.get('/abbonamento-ordiniposto', async (req, res) => {
 //Get subscription pricing
 app.get('/abbonamento-codiciriduzione', async (req, res) => {
   
-  const response = await getPlaNetSubscription(req.query);
+  const response = await getPlaNetSubscriptionPrices(req.query);
 
   if (response.success) {
     res.status(200).json({
@@ -279,6 +281,25 @@ app.get('/abbonamento-codiciriduzione', async (req, res) => {
 app.get('/planet-posti-liberi-abbonamento', async (req, res) => {
   console.log(req.query)
   const response = await getPlanetSubscriptionAvailableSeat(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the PlaNet Subscription'
+    });
+  }
+});
+
+
+//Get event pricing
+app.get('/evento-codiciriduzione', async (req, res) => {
+  
+  const response = await getPlanetEventPricing(req.query);
 
   if (response.success) {
     res.status(200).json({
@@ -501,6 +522,73 @@ app.get('/tessera-tifoso', async (req, res) => {
   }
 });
 
+
+// Check Supporter Card in VRO
+app.get('/autorizzazione-verificavesseravifoso', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getAutVerificaTesseraTifoso(req.query);
+
+  console.log('####################### response ###################')
+  console.log(response)
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: response.error.response.data //'There was an error getting the VRO Supporter Card Info'
+    });
+  }
+});
+
+// Register Supporter Card
+app.post('/tesseratifoso-registra', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.body.params)
+  const response = await tesseraTifosoRegistra(req.body.params);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Supporter Card Info'
+    });
+  }
+});
+
+// Isue Supporter Card in VRO and Check
+app.post('/tesseratifoso-emetti', async (req, res) => {
+
+  console.log('request params')
+  // console.log(req.body.params)
+  const response = await tesseraTifosoEmetti(req.body.params);
+
+  console.log('####################### response ###################')
+  console.log(response)
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: response.error.response.data
+    });
+  }
+});
+
+
 // Check VRO Ticket Eligibility
 app.post('/autorizzazione-verificapersona', async (req, res) => {
   console.log('request params')
@@ -508,6 +596,8 @@ app.post('/autorizzazione-verificapersona', async (req, res) => {
   const responses = await checkVroTicketIssueEligible(req.body.params);
   const allSuccessful = responses.every(response => response.success);
 
+  console.log('####################### response ###################')
+  console.log(responses)
   if (allSuccessful) {
     res.status(200).json({
       data: responses.map(response => response.data),
@@ -528,7 +618,7 @@ app.post('/autorizzazione-verificapersona', async (req, res) => {
 
 app.post('/biglietto-emettiesteso', async (req, res) => {
   console.log('Issuing Tickets', req.body.params)
-  const responses = await issueTickets(req.body.params);
+  const responses = await issueSingleMatchTickets(req.body.params);
   const allSuccessful = responses.every(response => response.success);
 
   if (allSuccessful) {

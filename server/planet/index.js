@@ -138,7 +138,7 @@ const getPlaNetSeasonTribunas = async (params) => {
   }
 };
 
-const getPlaNetSubscription = async (params) => {
+const getPlaNetSubscriptionPrices = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
 
   if (!plannetAccessTokenResponse.success) {
@@ -188,6 +188,40 @@ const getPlanetSubscriptionAvailableSeat = async (params) => {
       params: {
         tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId),
         bloccoId: parseInt(params.bloccoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+}
+
+
+const getPlanetEventPricing = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Evento/Codiciriduzione', {
+      params: {
+        eventoId: parseInt(params.eventoId),
+        codiceOrdinePosto: params.codiceOrdinePosto,
+        visibilita: 2
       }
     });
 
@@ -491,7 +525,7 @@ const createUser = async (params) => {
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
   
   for (const param of params) {
-    // selete param.supporter_card
+    // delete param.supporter_card
     try {
       const response = await axiosClient.post('/api/Utenza/AddPersona', param);
       results.push({
@@ -589,7 +623,39 @@ getTesseraTifoso = async (params) => {
   }
 };
 
-const issueTickets = async (params) => {
+getAutVerificaTesseraTifoso = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Autorizzazione/VerificaTesseraTifoso', {
+      params: {
+        codiceFiscaleSocieta: params.codiceFiscaleSocieta,
+        codiceTesseraTifoso: params.codiceTesseraTifoso
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+const issueSingleMatchTickets = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
   const results = [];
 
@@ -603,16 +669,36 @@ const issueTickets = async (params) => {
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
   
   for (const param of params) {
+
     try {
-      const response = await axiosClient.post('/api/Biglietto/EmettiEsteso', param);
-      results.push({
-        success: true,
-        dataPlanet: response.data,
-        data: {
-          ...param,
-          ticket_issue_response: response.data
-        }
-      });
+      let responseTdT
+      let response 
+      
+      console.log('######## typeof param.codiceFiscaleSocieta #############')
+      console.log(typeof param.codiceFiscaleSocieta)
+     
+      if (typeof param.codiceFiscaleSocieta === 'string') {
+        responseTdT = await axiosClient.post('/api/Biglietto/EmettiEstesoTdT', param);
+        results.push({
+          success: true,
+          dataPlanet: responseTdT.data,
+          data: {
+            ...param,
+            ticket_issue_response: responseTdT.data
+          }
+        });
+      } else {
+        response = await axiosClient.post('/api/Biglietto/EmettiEsteso', param);
+        results.push({
+          success: true,
+          dataPlanet: response.data,
+          data: {
+            ...param,
+            ticket_issue_response: response.data
+          }
+        });
+      }
+    
     } catch (error) {
       results.push({
         success: false,
@@ -620,6 +706,7 @@ const issueTickets = async (params) => {
         param
       });
     }
+    
   }
 
   return results;
@@ -708,12 +795,87 @@ getPlaNetTitoloInfo = async (params) => {
   return results;
 }
 
+tesseraTifosoRegistra = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.post('/api/TesseraTifoso/Registra', params);
+
+    if (response.data) {
+      return {
+        success: true,
+        data: response.data
+      };
+    } else {
+      return {
+        success: false,
+        error: response.data
+      };
+    }
+  } catch (error) {
+    console.error('Error in getting token:', error);
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+tesseraTifosoEmetti = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.post('/api/TesseraTifoso/Emetti', params);
+
+    console.log('$$$$$$$$$$$$$$$$$$$$ response $$$$$$$$$$$$$$$$$$')
+    console.log(response)
+    if (response.data) {
+      return {
+        success: true,
+        data: response.data
+      };
+    } else {
+      return {
+        success: false,
+        error: response.data
+      };
+    }
+  } catch (error) {
+    console.error('Error in getting token:', error);
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
 module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
                    getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
                    getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
                    getPlanetComuni, getPlanetsocietaSportiva,
                    getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
-                   createUser, checkVroTicketIssueEligible, issueTickets,
-                   getPlaNetTitoloStato, getPlaNetTitoloInfo,
-                   getTesseraTifoso, getPlaNetSubscription, getPlanetSubscriptionAvailableSeat
-};
+                   createUser, checkVroTicketIssueEligible, issueSingleMatchTickets,
+                   getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
+                   getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
+                   tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
+                   getPlanetSubscriptionAvailableSeat };
