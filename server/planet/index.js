@@ -511,7 +511,7 @@ getPlanetsocietaSportiva = async (token) => {
 };
 
 // params: similar to: https://mfapi-06.ticka.it/swagger/index.html => /api/Utenza/AddPersona
-const createUser = async (params) => {
+const utenzaAddPersona = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
   const results = [];
 
@@ -534,6 +534,51 @@ const createUser = async (params) => {
         data: {
           ...param,
           persona_id: response.data.id
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      console.log(error.response.data)
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
+getBigliettoIsUtilizzatore = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  console.log(params)
+  
+  for (const param of params.personaData) {
+    try {
+      const response = await axiosClient.get('/api/Biglietto/IsUtilizzatore', {
+        params: {
+          personaId: parseInt(param.persona_id),
+          eventoId: parseInt(params.eventoId),
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          has_issued_ticket: response.data
         }
       });
     } catch (error) {
@@ -700,9 +745,10 @@ const issueSingleMatchTickets = async (params) => {
       }
     
     } catch (error) {
+      console.log(error)
       results.push({
         success: false,
-        error: error,
+        error: error.response.data,
         param
       });
     }
@@ -874,7 +920,8 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
                    getPlanetComuni, getPlanetsocietaSportiva,
                    getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
-                   createUser, checkVroTicketIssueEligible, issueSingleMatchTickets,
+                   utenzaAddPersona, getBigliettoIsUtilizzatore, 
+                   checkVroTicketIssueEligible, issueSingleMatchTickets,
                    getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
                    getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
                    tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 

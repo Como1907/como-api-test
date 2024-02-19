@@ -7,7 +7,8 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
         getPlanetComuni, getPlanetsocietaSportiva,
         getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
-        createUser, checkVroTicketIssueEligible, issueSingleMatchTickets,
+        utenzaAddPersona, getBigliettoIsUtilizzatore, 
+        checkVroTicketIssueEligible, issueSingleMatchTickets,
         getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
         getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
         tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
@@ -481,7 +482,7 @@ app.get('/planet-societa-sportiva', async (req, res) => {
 // Add Persona
 app.post('/utenza-addpersona', async (req, res) => {
   console.log('Creating users', req.body.params)
-  const responses = await createUser(req.body.params);
+  const responses = await utenzaAddPersona(req.body.params);
   const allSuccessful = responses.every(response => response.success);
 
   if (allSuccessful) {
@@ -497,6 +498,34 @@ app.post('/utenza-addpersona', async (req, res) => {
       success: false,
       successfulCreations: successfulCreations,
       failedCreations: failedCreations,
+      error: 'There was an error processing one or more user creations!'
+    });
+  }
+}); 
+
+// Check if a Ticket holder already has issued ticket for anEvent
+app.post('/biglietto-isutilizzatore', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.body.params)
+  const responses = await getBigliettoIsUtilizzatore(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
+
+  console.log('####################### response ###################')
+  console.log(responses)
+  if (allSuccessful) {
+    res.status(200).json({
+      data: responses.map(response => response.data),
+      success: true
+    });
+  } else {
+    const successfulValidations = responses.filter(response => response.success).map(response => response.data);
+    const failedValidations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
+    res.status(500).json({
+      success: false,
+      successfulValidations: successfulValidations,
+      failedValidations: failedValidations,
       error: 'There was an error processing one or more user creations!'
     });
   }
