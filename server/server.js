@@ -11,7 +11,7 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
         getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
         tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
-        getPlanetSubscriptionAvailableSeat }
+        getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -295,6 +295,23 @@ app.get('/planet-posti-liberi-abbonamento', async (req, res) => {
   }
 });
 
+//getPlanetCheckSeasonTicketHolder
+app.get('/planet-abbonamento-isutilizzatore', async (req, res) => {
+  console.log(req.query)
+  const response = await getPlanetCheckSeasonTicketHolder(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the PlaNet Subscription'
+    });
+  }
+});
 
 //Get event pricing
 app.get('/evento-codiciriduzione', async (req, res) => {
