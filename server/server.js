@@ -21,8 +21,11 @@ const cors = require('cors');
 const basicAuth = require('express-basic-auth');
 // Replace if using a different env file or config
 const env = require('dotenv').config({path: './.env'});
+const bodyParser = require('body-parser');
 
 app.use(cors());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 const basicAuthorizer = (username, password) => {
   const userMatches = basicAuth.safeCompare(username, process.env.BASIC_AUTH_USERNAME);
@@ -244,7 +247,7 @@ app.get('/abbonamento-tipiabbonamento', async (req, res) => {
 
 //Get subscription tribuna
 app.get('/abbonamento-ordiniposto', async (req, res) => {
-  
+
   const response = await getPlaNetSeasonTribunas(req.query);
 
   if (response.success) {
@@ -770,7 +773,7 @@ app.post('/verify-sms-otp', async (req, res) => {
 app.post('/send-otp', async (req, res) => {
   console.log('Sending email',req.body)
   const { email } = req.body;
-  const saltRounds = 10; 
+  const saltRounds = 10;
   const otp = Math.floor(100000 + Math.random() * 900000);
   const hashedOtp = await bcrypt.hash(otp.toString(), saltRounds);
 
@@ -791,13 +794,13 @@ app.post('/send-otp', async (req, res) => {
 // Endpoint to send Ticket Purchase Email
 app.post('/send-ticket-purchase-email', async (req, res) => {
   console.log('Sending email',req.body)
-  const { email, ticket, language } = req.body.payload;
+  const { email, ticket, ticketsPdf, language } = req.body.params;
 
   if (!email) {
     return res.status(400).json({ error: 'Email is required' });
   }
 
-  const emailSent = await sendTicketPurchaseEmail(email, ticket, language);
+  const emailSent = await sendTicketPurchaseEmail(email, ticket, language, ticketsPdf);
   console.log('emailSent', emailSent)
 
   if (emailSent) {

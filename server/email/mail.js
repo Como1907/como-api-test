@@ -71,7 +71,7 @@ const emailTemplate = (otp, homePageTitle, logoImageUrl) => {
 };
 
 
-const sendTicketPurchaseEmail = async (email, ticket, language) => {
+const sendTicketPurchaseEmail = async (email, ticket, language, ticketsPdf) => {
   let subject
   if (language == 'en') {
     subject = 'Your COMO 1907 Ticket Purchase - ' + ticket.fixture_name
@@ -84,6 +84,7 @@ const sendTicketPurchaseEmail = async (email, ticket, language) => {
     subject: subject,
     // text: `Your OTP code is: ${otp}`,
     html: emailTemplateTicketPurchase(ticket, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
+    attachments: ticketsPdf
   };
 
   try {
