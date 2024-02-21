@@ -215,19 +215,29 @@ const getPlanetCheckSeasonTicketHolder = async (params) => {
 
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
 
-  try {
-    const response = await axiosClient.get('/api/Abbonamento/IsUtilizzatore', {
+  const results = [];
+  params.personaData.forEach(item => {
+    const request = axiosClient.get('/api/Abbonamento/IsUtilizzatore', {
       params: {
         tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId),
-        personaId: parseInt(params.personaId)
+        personaId: parseInt(item.personaId)
       }
     });
+    results.push(request);
+  })
 
+  try {
+    const data = [];
+    const response = await Promise.all(results);
+    response.forEach((item, index) => {
+      data.push({
+        ...params.personaData[index],
+        has_issued_ticket: item ?? false,
+      })
+    })
     return {
       success: true,
-      data: {
-        has_issued_ticket: response.data ?? false
-      }
+      data: data
     };
   } catch (error) {
     console.log(error)
