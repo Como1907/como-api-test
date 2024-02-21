@@ -686,7 +686,7 @@ app.post('/biglietto-emettiesteso', async (req, res) => {
 });
 
 app.post('/abbonamento-emettiesteso', async (req, res) => {
-  console.log('Issuing Tickets', req.body.params)
+  console.log('Issuing Season Tickets', req.body.params)
   const responses = await issueSeasonTickets(req.body.params);
   const allSuccessful = responses.every(response => response.success);
 
