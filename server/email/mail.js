@@ -129,8 +129,6 @@ const emailTemplateTicketPurchase = (ticket, language, homePageTitle, logoImageU
                   To obtain your ticket, please follow these four simple steps:
                   <ul>
                     <li>Go to your <strong>“Digital Wallet“</strong> section, which is located in the menu on your profile (please ensure that you are logged in).</li><br>
-                    <li> To validate your ticket, click on the “Digital Wallet“ section on the profile menu. Then, click the 'Issue' button to start the issuing process.</li><br>
-                    <li>On the issue ticket page, you will be asked to fill out the details of the visitor(s) who will attend the match event.</li><br>
                     <li> Visit “Issued Tickets” on the 'Digital Wallet' menu, to see your QR code issued ticket(s).</li>
                   </ul>
                   <br>
@@ -245,8 +243,6 @@ const emailTemplateTicketPurchase = (ticket, language, homePageTitle, logoImageU
                   Per ottenere il tuo biglietto, segui questi quattro semplici passaggi:
                   <ul>
                     <li>Vai alla sezione <strong>"Portafoglio digitale"</strong>, che si trova nel menu del tuo profilo (assicurati di aver effettuato l'accesso).</li><br>
-                    <li> Per convalidare il tuo biglietto, fai clic sulla sezione "Portafoglio digitale" nel menu del profilo. Quindi, fai clic sul pulsante "Emetti" per avviare il processo di emissione.</li><br>
-                    <li>Nella pagina di emissione del biglietto ti verrà chiesto di inserire i dettagli del/i visitatore/i che parteciperà all'evento della partita.</li><br>
                     <li> Visita "Biglietti emessi" nel menu "Portafoglio digitale" per vedere i biglietti emessi con il codice QR.</li>
                   </ul>
                   <br>

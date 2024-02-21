@@ -8,7 +8,7 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         getPlanetComuni, getPlanetsocietaSportiva,
         getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
         utenzaAddPersona, getBigliettoIsUtilizzatore, 
-        checkVroTicketIssueEligible, issueSingleMatchTickets,
+        checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
         getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
         getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
         tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
@@ -665,6 +665,29 @@ app.post('/autorizzazione-verificapersona', async (req, res) => {
 app.post('/biglietto-emettiesteso', async (req, res) => {
   console.log('Issuing Tickets', req.body.params)
   const responses = await issueSingleMatchTickets(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
+
+  if (allSuccessful) {
+    res.status(200).json({
+      data: responses.map(response => response.data),
+      success: true
+    });
+  } else {
+    const successfulCreations = responses.filter(response => response.success).map(response => response.data);
+    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
+    res.status(500).json({
+      success: false,
+      successfulCreations: successfulCreations,
+      failedCreations: failedCreations,
+      error: 'There was an error processing one or more ticket issuing!'
+    });
+  }
+});
+
+app.post('/abbonamento-emettiesteso', async (req, res) => {
+  console.log('Issuing Season Tickets', req.body.params)
+  const responses = await issueSeasonTickets(req.body.params);
   const allSuccessful = responses.every(response => response.success);
 
   if (allSuccessful) {
