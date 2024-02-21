@@ -203,6 +203,51 @@ const getPlanetSubscriptionAvailableSeat = async (params) => {
   }
 }
 
+const getPlanetCheckSeasonTicketHolder = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  const results = [];
+  params.personaData.forEach(item => {
+    const request = axiosClient.get('/api/Abbonamento/IsUtilizzatore', {
+      params: {
+        tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId),
+        personaId: parseInt(item.personaId)
+      }
+    });
+    results.push(request);
+  })
+
+  try {
+    const data = [];
+    const response = await Promise.all(results);
+    response.forEach((item, index) => {
+      data.push({
+        ...params.personaData[index],
+        has_issued_ticket: item ?? false,
+      })
+    })
+    return {
+      success: true,
+      data: data
+    };
+  } catch (error) {
+    console.log(error)
+    return {
+      success: false,
+      error: error
+    };
+  }
+}
+
 
 const getPlanetEventPricing = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
@@ -612,7 +657,7 @@ const checkVroTicketIssueEligible = async (params) => {
         params: {
           personaId: parseInt(param.persona_id),
           puntovenditaId: 10,
-          isAbbonamento: false
+          isAbbonamento: param.is_season_ticket ?? false,
         }
       });
       results.push({
@@ -925,4 +970,4 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
                    getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
                    tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
-                   getPlanetSubscriptionAvailableSeat };
+                   getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder };
