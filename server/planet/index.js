@@ -845,7 +845,7 @@ getPlaNetTitoloStato = async (params) => {
   return results;
 }
 
-getPlaNetTitoloInfo = async (params) => {
+const getPlaNetTitoloInfo = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
   const results = [];
 
