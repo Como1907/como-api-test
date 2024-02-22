@@ -102,9 +102,9 @@ const sendTicketPurchaseEmail = async (email, ticket, language, ticketsPdf) => {
 const sendSeasonTicketPurchaseEmail = async (email, ticket, language, ticketsPdf) => {
   let subject
   if (language == 'en') {
-    subject = 'Your COMO 1907 Season Ticket Purchase - ' + ticket.fixture_name
+    subject = 'Your COMO 1907 Season Ticket Purchase - ' + ticket.season_ticket_name
   } else if (language == 'it') {
-    subject = 'Il tuo acquisto del biglietto abbonamento COMO 1907 - ' + ticket.fixture_name
+    subject = 'Il tuo acquisto del biglietto abbonamento COMO 1907 - ' + ticket.season_ticket_name
   }
   const msg = {
     to: email,
@@ -385,7 +385,7 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
               <h3>Congratulations, your transaction was successful!</h3>
               <div style="text-align: justify;">
                 <p>
-                We are excited to inform you that your transaction for the ${ticket.fixture_name} Season Ticket has been successfully processed. The payment has been approved and added the Digital Ticket(s) have been added to your account.
+                We are excited to inform you that your transaction for the ${ticket.season_ticket_name} Season Ticket has been successfully processed. The payment has been approved and added the Digital Ticket(s) have been added to your account.
                   <br>
                   <br>
                   To obtain your ticket, please follow these four simple steps:
@@ -435,7 +435,7 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
                         <div class="mb-1">
                           <p class="my-025" style="font-size:13px">
                             Match Event - Ticket Type<br>
-                            ${ticket.fixture_name} - ${ticket.ticket_type}
+                            ${ticket.season_ticket_name} - ${ticket.ticket_type}
                           </p>
                         </div>
                         <div class="mb-1">
@@ -499,7 +499,7 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
               <h3>Congratulazioni, la transazione è andata a buon fine!</h3>
               <div style="text-align: justify;">
                 <p>
-                Siamo lieti di informarti che la tua transazione per il Match Event ${ticket.fixture_name} è stata elaborata con successo. Il pagamento è stato approvato e i biglietti abbonamento digitali sono stati aggiunti al tuo account.
+                Siamo lieti di informarti che la tua transazione per il Match Event ${ticket.season_ticket_name} è stata elaborata con successo. Il pagamento è stato approvato e i biglietti abbonamento digitali sono stati aggiunti al tuo account.
                   <br>
                   <br>
                   Per ottenere il tuo biglietto, segui questi quattro semplici passaggi:
@@ -549,7 +549,7 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
                         <div class="mb-1">
                           <p class="my-025" style="font-size:13px">
                             Match Event - Ticket Type<br>
-                            ${ticket.fixture_name} - ${ticket.ticket_type}
+                            ${ticket.season_ticket_name} - ${ticket.ticket_type}
                           </p>
                         </div>
                         <div class="mb-1">
