@@ -837,6 +837,7 @@ const issueSeasonTickets = async (params) => {
           }
         });
       } else {
+        //Without Supporter Card
         response = await axiosClient.post('/api/Abbonamento/EmettiEsteso', param);
         results.push({
           success: true,
