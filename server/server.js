@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { sendOTP, sendTicketPurchaseEmail } = require('./email/mail.js');
+const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
@@ -841,6 +841,25 @@ app.post('/send-ticket-purchase-email', async (req, res) => {
   }
 
   const emailSent = await sendTicketPurchaseEmail(email, ticket, language, ticketsPdf);
+  console.log('emailSent', emailSent)
+
+  if (emailSent) {
+    res.status(200).json({ message: 'Email sent successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error sending the email' });
+  }
+});
+
+// Endpoint to send Ticket Purchase Email
+app.post('/send-season-ticket-purchase-email', async (req, res) => {
+  console.log('Sending email',req.body)
+  const { email, ticket, ticketsPdf, language } = req.body.params;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const emailSent = await sendSeasonTicketPurchaseEmail(email, ticket, language, ticketsPdf);
   console.log('emailSent', emailSent)
 
   if (emailSent) {
