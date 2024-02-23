@@ -5,6 +5,7 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 }
 
 const baseURL = 'https://mfapi-06.ticka.it'
+// const baseURL = 'https://mfapi-05.ticka.it'
 const axiosClient = axios.create({
   baseURL: baseURL,
   headers: {
@@ -658,7 +659,7 @@ const checkVroTicketIssueEligible = async (params) => {
         params: {
           personaId: parseInt(param.persona_id),
           puntovenditaId: 10,
-          isAbbonamento: param.is_season_ticket ?? false,
+          isAbbonamento: false
         }
       });
       results.push({
@@ -880,8 +881,7 @@ getPlaNetTitoloStato = async (params) => {
     try {
       const response = await axiosClient.get('/api/Titolo/Stato', {
         params: {
-          id: parseInt(param.ticket_issue_response.id),
-          eventoId: parseInt(param.modelloBiglietto.eventoId),
+          id: parseInt(param.ticket_issue_response.id)
         }
       });
       results.push({
@@ -905,7 +905,7 @@ getPlaNetTitoloStato = async (params) => {
   return results;
 }
 
-const getPlaNetTitoloInfo = async (params) => {
+getPlaNetTitoloInfo = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
   const results = [];
 
@@ -944,6 +944,129 @@ const getPlaNetTitoloInfo = async (params) => {
   }
 
   return results;
+}
+
+getPlaNetTitoloInfoBySigilloFiscale = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    console.log('################ params.sigilloFiscale #################')
+    console.log(params.sigilloFiscale)
+    const response = await axiosClient.get('/api/Titolo/Info', {
+      params: {
+        sigilloFiscale: params.sigilloFiscale
+      }
+    });
+
+    if (response.data) {
+      return {
+        success: true,
+        data: response.data
+      };
+    } else {
+      return {
+        success: false,
+        error: response.data
+      };
+    }
+  } catch (error) {
+    console.error('Error in getting token:', error);
+    return {
+      success: false,
+      error: error
+    };
+  }
+}
+
+getPlanetTitoloEsteso = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.get('/api/Titolo/InfoEsteso', {
+        params: {
+          id: parseInt(param.ticket_issue_response.id)
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          info_esteso: response.data
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
+getPlaNetTitoloIsCedibile = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Titolo/IsCedibile', {
+      params: {
+        id: parseInt(params.id)
+      }
+    });
+
+    if (response.data) {
+      return {
+        success: true,
+        data: response.data
+      };
+    } else {
+      return {
+        success: false,
+        error: response.data
+      };
+    }
+  } catch (error) {
+    console.error('Error in getting token:', error);
+    return {
+      success: false,
+      error: error
+    };
+  }
 }
 
 tesseraTifosoRegistra = async (params) => {
@@ -1075,6 +1198,6 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    utenzaAddPersona, getBigliettoIsUtilizzatore, 
                    checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
                    getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
-                   getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
+                   getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti
                    tesseraTifosoEmetti,getPlaNetSubscriptionPrices, transferFootballEvent, transferTicketToPerson, 
                    getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder };
