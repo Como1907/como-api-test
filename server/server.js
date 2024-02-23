@@ -11,7 +11,7 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
         getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlaNetTitoloInfoBySigilloFiscale, getPlanetEventPricing,
         getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
-        tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
+        tesseraTifosoEmetti,getPlaNetSubscriptionPrices, getPlanetTitoloEsteso,
         getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder }
         = require('./planet/index.js');
 const express = require('express');
@@ -760,6 +760,31 @@ app.post('/titolo-info', async (req, res) => {
     });
   }
 });
+
+//Get the Issued Ticket Title Esteso
+app.post('/titolo-esteso', async (req, res) => {
+
+  console.log('Getting Titolo Info Esteso', req.body.params)
+  const responses = await getPlanetTitoloEsteso(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
+
+  if (allSuccessful) {
+    res.status(200).json({
+      data: responses.map(response => response.data),
+      success: true
+    });
+  } else {
+    const successfulCreations = responses.filter(response => response.success).map(response => response.data);
+    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
+    res.status(500).json({
+      success: false,
+      successfulCreations: successfulCreations,
+      failedCreations: failedCreations,
+      error: 'There was an error getting the Titolo Esteso!'
+    });
+  }
+})
 
 // Get the Issued Ticket Title Stato - By Fiscal Seal.
 app.post('/titolo-info-by-sigillo-fiscale', async (req, res) => {
