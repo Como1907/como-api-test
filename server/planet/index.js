@@ -1197,7 +1197,7 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
                    utenzaAddPersona, getBigliettoIsUtilizzatore, 
                    checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
-                   getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
-                   getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti
-                   tesseraTifosoEmetti,getPlaNetSubscriptionPrices, transferFootballEvent, transferTicketToPerson, 
+                   getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing, getPlanetTitoloEsteso,
+                   getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti,
+                   tesseraTifosoEmetti, getPlaNetSubscriptionPrices, transferFootballEvent, transferTicketToPerson, 
                    getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder };
