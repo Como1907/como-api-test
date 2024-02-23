@@ -946,6 +946,47 @@ const getPlaNetTitoloInfo = async (params) => {
   return results;
 }
 
+getPlanetTitoloEsteso = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.get('/api/Titolo/InfoEsteso', {
+        params: {
+          id: parseInt(param.ticket_issue_response.id)
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          info_esteso: response.data
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
 tesseraTifosoRegistra = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
   const results = [];
@@ -1027,7 +1068,7 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
                    utenzaAddPersona, getBigliettoIsUtilizzatore, 
                    checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
-                   getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
+                   getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetTitoloEsteso, getPlanetEventPricing,
                    getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
                    tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
                    getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder };
