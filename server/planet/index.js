@@ -1198,6 +1198,6 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    utenzaAddPersona, getBigliettoIsUtilizzatore, 
                    checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
                    getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
-                   getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti
+                   getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso, getPlanetTitoloEsteso, 
                    tesseraTifosoEmetti,getPlaNetSubscriptionPrices, transferFootballEvent, transferTicketToPerson, 
                    getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder };
