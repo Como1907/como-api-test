@@ -9,7 +9,7 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
         utenzaAddPersona, getBigliettoIsUtilizzatore, 
         checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
-        getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
+        getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlaNetTitoloInfoBySigilloFiscale, getPlanetEventPricing,
         getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
         tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
         getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder }
@@ -736,7 +736,7 @@ app.post('/titolo-stato', async (req, res) => {
   }
 });
 
-// Get the Issued Ticket Title Stato - Fiscal Seal etc.
+// Get the Issued Ticket Title Stato - By ID
 app.post('/titolo-info', async (req, res) => {
 
   console.log('Getting Titolo Info', req.body.params)
@@ -757,6 +757,53 @@ app.post('/titolo-info', async (req, res) => {
       successfulCreations: successfulCreations,
       failedCreations: failedCreations,
       error: 'There was an errorgetting the Titolo Info!'
+    });
+  }
+});
+
+// Get the Issued Ticket Title Stato - By Fiscal Seal.
+app.post('/titolo-info-by-sigillo-fiscale', async (req, res) => {
+
+  console.log('Getting Titolo Info Sigillo Fiscale', req.body.params)
+  console.log(req.query)
+  const response = await getPlaNetTitoloInfoBySigilloFiscale(req.body.params);
+
+  console.log('####################### response ###################')
+  console.log(response)
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: response.error.response.data //'There was an error getting the Issued Ticket Title Stato - By Fiscal Seal.'
+    });
+  }
+});
+
+
+// Determines whether a ticket is transferable under secondary ticketing regulations
+app.post('/titolo-iscedibile', async (req, res) => {
+
+  console.log('Getting Titolo Is Cedibile/Transferrable', req.body.params)
+  console.log(req.query)
+  const response = await getPlaNetTitoloIsCedibile(req.body.params);
+
+  console.log('####################### response ###################')
+  console.log(response)
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: response.error.response.data //'There was an error getting the VRO Supporter Card Info'
     });
   }
 });
