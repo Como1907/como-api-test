@@ -11,7 +11,7 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
         getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing,
         getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
-        tesseraTifosoEmetti,getPlaNetSubscriptionPrices, 
+        tesseraTifosoEmetti,getPlaNetSubscriptionPrices, transferFootballEvent, transferTicketToPerson, 
         getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder }
         = require('./planet/index.js');
 const express = require('express');
@@ -741,6 +741,53 @@ app.post('/titolo-info', async (req, res) => {
 
   console.log('Getting Titolo Info', req.body.params)
   const responses = await getPlaNetTitoloInfo(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
+
+  if (allSuccessful) {
+    res.status(200).json({
+      data: responses.map(response => response.data),
+      success: true
+    });
+  } else {
+    const successfulCreations = responses.filter(response => response.success).map(response => response.data);
+    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
+    res.status(500).json({
+      success: false,
+      successfulCreations: successfulCreations,
+      failedCreations: failedCreations,
+      error: 'There was an errorgetting the Titolo Info!'
+    });
+  }
+});
+
+// Transfer Football Event
+app.post('/abbonamento-cessione', async (req, res) => {
+  console.log('Posting transferFootballEvent', req.body.params)
+  const responses = await transferFootballEvent(req.body.params);
+  const allSuccessful = responses.every(response => response.success);
+
+  if (allSuccessful) {
+    res.status(200).json({
+      data: responses.map(response => response.data),
+      success: true
+    });
+  } else {
+    const successfulCreations = responses.filter(response => response.success).map(response => response.data);
+    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+
+    res.status(500).json({
+      success: false,
+      successfulCreations: successfulCreations,
+      failedCreations: failedCreations,
+      error: 'There was an errorgetting the Titolo Info!'
+    });
+  }
+});
+
+app.post('/biglietto-cessione', async (req, res) => {
+  console.log('Posting transferTicketToPerson', req.body.params)
+  const responses = await transferTicketToPerson(req.body.params);
   const allSuccessful = responses.every(response => response.success);
 
   if (allSuccessful) {
