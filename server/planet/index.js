@@ -1200,4 +1200,4 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing, getPlanetTitoloEsteso,
                    getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti,
                    tesseraTifosoEmetti, getPlaNetSubscriptionPrices, transferFootballEvent, transferTicketToPerson, 
-                   getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder };
+                   getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder, getPlaNetTitoloInfoBySigilloFiscale };

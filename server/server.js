@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail } = require('./email/mail.js');
+const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendTicketTranferToPersonEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
@@ -804,7 +804,7 @@ app.post('/titolo-info-by-sigillo-fiscale', async (req, res) => {
   } else {
     res.status(500).json({
       success: false,
-      error: response.error.response.data //'There was an error getting the Issued Ticket Title Stato - By Fiscal Seal.'
+      error: response.error //'There was an error getting the Issued Ticket Title Stato - By Fiscal Seal.'
     });
   }
 });
@@ -979,6 +979,24 @@ app.post('/send-season-ticket-purchase-email', async (req, res) => {
   }
 
   const emailSent = await sendSeasonTicketPurchaseEmail(email, ticket, language, ticketsPdf);
+  console.log('emailSent', emailSent)
+
+  if (emailSent) {
+    res.status(200).json({ message: 'Email sent successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error sending the email' });
+  }
+});
+
+app.post('/send-transfer-ticket-email', async (req, res) => {
+  console.log('Sending email',req.body)
+  const { email, ticket, ticketsPdf, language } = req.body.params;
+
+  if (!email.sender && !email.receiver) {
+    return res.status(400).json({ error: 'Missing email sender or receiver'})
+  }
+
+  const emailSent = await sendTicketTranferToPersonEmail(email, ticket, language, ticketsPdf);
   console.log('emailSent', emailSent)
 
   if (emailSent) {
