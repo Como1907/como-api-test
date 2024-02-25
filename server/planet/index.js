@@ -4,8 +4,8 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   localStorage = new LocalStorage('./scratch');
 }
 
-const baseURL = 'https://mfapi-06.ticka.it'
-// const baseURL = 'https://mfapi-05.ticka.it'
+// const baseURL = 'https://mfapi-06.ticka.it'
+const baseURL = 'https://mfapi-05.ticka.it'
 const axiosClient = axios.create({
   baseURL: baseURL,
   headers: {
@@ -122,6 +122,37 @@ const getPlaNetSeasonTribunas = async (params) => {
 
   try {
     const response = await axiosClient.get('/api/Abbonamento/Ordiniposto', {
+      params: {
+        tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+getPlaNetSeasonEvents = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Abbonamento/EventiPerTipoAbbonamento', {
       params: {
         tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId)
       }
@@ -1143,7 +1174,7 @@ tesseraTifosoEmetti = async (params) => {
   }
 };
 
-const transferFootballEvent = async (params) => {
+const transferSeasonTicketToPerson = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken();
 
   if (!plannetAccessTokenResponse.success) {
@@ -1156,7 +1187,10 @@ const transferFootballEvent = async (params) => {
   for (const param of Array.isArray(params) ? params : [params]) {
     try {
       const response = await axiosClient.post('/api/Abbonamento/Cessione', param); 
-      results.push({ success: true, data: response.data });
+      results.push({ 
+        success: true, 
+        data: response.data 
+      });
     } catch (error) {
       console.error('Transfer event error:', error);
       results.push({ success: false, error: error.message, param });
@@ -1179,7 +1213,10 @@ const transferTicketToPerson = async (params) => {
   for (const param of Array.isArray(params) ? params : [params]) {
     try {
       const response = await axiosClient.post('/api/Biglietto/Cessione', param); 
-      results.push({ success: true, data: response.data });
+      results.push({ 
+        success: true, 
+        data: response.data 
+      });
     } catch (error) {
       console.error('Ticket transfer error:', error);
       results.push({ success: false, error: error.message, param }); 
@@ -1193,11 +1230,11 @@ const transferTicketToPerson = async (params) => {
 module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
                    getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
                    getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
-                   getPlanetComuni, getPlanetsocietaSportiva,
-                   getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
-                   utenzaAddPersona, getBigliettoIsUtilizzatore, 
-                   checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
-                   getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlanetEventPricing, getPlanetTitoloEsteso,
-                   getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti,
-                   tesseraTifosoEmetti, getPlaNetSubscriptionPrices, transferFootballEvent, transferTicketToPerson, 
-                   getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder, getPlaNetTitoloInfoBySigilloFiscale };
+                   getPlanetComuni, getPlanetsocietaSportiva, getPlaNetSeasonTickets, 
+                   getPlaNetSeasonTribunas, getPlaNetSeasonEvents, utenzaAddPersona, 
+                   getBigliettoIsUtilizzatore, checkVroTicketIssueEligible, issueSingleMatchTickets, 
+                   issueSeasonTickets, getPlaNetTitoloStato, getPlaNetTitoloInfo, 
+                   getPlaNetTitoloInfoBySigilloFiscale, getPlanetEventPricing, getTesseraTifoso, 
+                   tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti,
+                   getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferSeasonTicketToPerson, 
+                   transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder };

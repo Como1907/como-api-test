@@ -5,14 +5,14 @@ const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
         getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
         getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
-        getPlanetComuni, getPlanetsocietaSportiva,
-        getPlaNetSeasonTickets, getPlaNetSeasonTribunas,
-        utenzaAddPersona, getBigliettoIsUtilizzatore, 
-        checkVroTicketIssueEligible, issueSingleMatchTickets, issueSeasonTickets,
-        getPlaNetTitoloStato, getPlaNetTitoloInfo, getPlaNetTitoloInfoBySigilloFiscale, getPlanetEventPricing,
-        getTesseraTifoso, tesseraTifosoRegistra, getAutVerificaTesseraTifoso,
-        tesseraTifosoEmetti,getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferFootballEvent, transferTicketToPerson, 
-        getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder }
+        getPlanetComuni, getPlanetsocietaSportiva, getPlaNetSeasonTickets, 
+        getPlaNetSeasonTribunas, getPlaNetSeasonEvents, utenzaAddPersona, 
+        getBigliettoIsUtilizzatore, checkVroTicketIssueEligible, issueSingleMatchTickets, 
+        issueSeasonTickets, getPlaNetTitoloStato, getPlaNetTitoloInfo, 
+        getPlaNetTitoloInfoBySigilloFiscale, getPlanetEventPricing, getTesseraTifoso, 
+        tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti,
+        getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferSeasonTicketToPerson, 
+        transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -245,6 +245,7 @@ app.get('/abbonamento-tipiabbonamento', async (req, res) => {
   }
 });
 
+
 //Get subscription tribuna
 app.get('/abbonamento-ordiniposto', async (req, res) => {
 
@@ -259,6 +260,24 @@ app.get('/abbonamento-ordiniposto', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'There was an error getting the PlaNet Season Tribunas'
+    });
+  }
+});
+
+//Get events linked to the subscription
+app.get('/abbonamento-eventipertipoabbonamento', async (req, res) => {
+  
+  const response = await getPlaNetSeasonEvents(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the PlaNet subscription Events'
     });
   }
 });
@@ -835,8 +854,8 @@ app.post('/titolo-iscedibile', async (req, res) => {
 
 // Transfer Football Event
 app.post('/abbonamento-cessione', async (req, res) => {
-  console.log('Posting transferFootballEvent', req.body.params)
-  const responses = await transferFootballEvent(req.body.params);
+  console.log('Posting transferSeasonTicketToPerson', req.body.params)
+  const responses = await transferSeasonTicketToPerson(req.body.params);
   const allSuccessful = responses.every(response => response.success);
 
   if (allSuccessful) {
