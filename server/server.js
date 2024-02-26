@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendTicketTranferToPersonEmail } = require('./email/mail.js');
+const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
@@ -1100,7 +1100,7 @@ app.post('/send-season-ticket-purchase-email', async (req, res) => {
   }
 });
 
-app.post('/send-transfer-ticket-email', async (req, res) => {
+app.post('/send-transfer-fixture-ticket-email', async (req, res) => {
   console.log('Sending email',req.body)
   const { email, ticket, ticketsPdf, language } = req.body.params;
 
@@ -1108,7 +1108,25 @@ app.post('/send-transfer-ticket-email', async (req, res) => {
     return res.status(400).json({ error: 'Missing email sender or receiver'})
   }
 
-  const emailSent = await sendTicketTranferToPersonEmail(email, ticket, language, ticketsPdf);
+  const emailSent = await sendFixtureTicketTransferToPersonEmail(email, ticket, language, ticketsPdf);
+  console.log('emailSent', emailSent)
+
+  if (emailSent) {
+    res.status(200).json({ message: 'Email sent successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error sending the email' });
+  }
+});
+
+app.post('/send-transfer-season-ticket-email', async (req, res) => {
+  console.log('Sending email',req.body)
+  const { email, ticket, ticketsPdf, language } = req.body.params;
+
+  if (!email.sender && !email.receiver) {
+    return res.status(400).json({ error: 'Missing email sender or receiver'})
+  }
+
+  const emailSent = await sendSeasonTicketTransferToPersonEmail(email, ticket, language, ticketsPdf);
   console.log('emailSent', emailSent)
 
   if (emailSent) {
