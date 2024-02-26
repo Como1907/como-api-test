@@ -413,6 +413,41 @@ const getMappaPostiInfo = async (params) => {
   }
 };
 
+// Get Seat Info for section with status and label
+const getMappaBlocchi = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Mappa/Blocchi', {
+      params: {
+        piantaId: 1, //parseInt(params.eventoId),
+        splitId: 2, //parseInt(params.bloccoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
+
+
 // Block Seat
 const getMappaBloccaPosto = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
@@ -1425,7 +1460,7 @@ getMappaPostiAbbonamentoInfo = async (params) => {
 }
 
 module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
-                   getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
+                   getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, getMappaBlocchi,
                    getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
                    getPlanetComuni, getPlanetsocietaSportiva, getPlaNetSeasonTickets, 
                    getPlaNetSeasonTribunas, getPlaNetSeasonEvents, utenzaAddPersona, 
