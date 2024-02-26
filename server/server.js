@@ -12,7 +12,8 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
         getPlaNetTitoloInfoBySigilloFiscale, getPlanetEventPricing, getTesseraTifoso, 
         tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti,
         getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferSeasonTicketToPerson, 
-        transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder }
+        transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder,
+        getMappaPostiAbbonamentoInfo, getTitoliAcquistabiliAbbonamento, getTitoliAcquistabili }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -895,6 +896,72 @@ app.post('/biglietto-cessione', async (req, res) => {
       successfulCreations: successfulCreations,
       failedCreations: failedCreations,
       error: 'There was an processing the Biglietto Cessione!'
+    });
+  }
+});
+
+app.get('/mappa-posti-abbonamento-info', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getMappaPostiAbbonamentoInfo(req.query);
+
+  console.log('####################### response ###################')
+  console.log(response)
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: response.error.response.data //'There was an error getting the VRO Supporter Card Info'
+    });
+  }
+});
+
+app.get('/titoli-acquistabili-abbonamento', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getTitoliAcquistabiliAbbonamento(req.query);
+
+  console.log('####################### response ###################')
+  console.log(response)
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: response.error.response.data //'There was an error getting the VRO Supporter Card Info'
+    });
+  }
+});
+
+app.get('/titoli-acquistabili', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getTitoliAcquistabili(req.query);
+
+  console.log('####################### response ###################')
+  console.log(response)
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: response.error.response.data //'There was an error getting the VRO Supporter Card Info'
     });
   }
 });
