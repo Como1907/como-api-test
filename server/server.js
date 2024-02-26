@@ -871,7 +871,7 @@ app.post('/abbonamento-cessione', async (req, res) => {
       success: false,
       successfulCreations: successfulCreations,
       failedCreations: failedCreations,
-      error: 'There was an errorgetting the Titolo Info!'
+      error: 'There was an processing the Abbonamento Cessione!'
     });
   }
 });
@@ -894,7 +894,7 @@ app.post('/biglietto-cessione', async (req, res) => {
       success: false,
       successfulCreations: successfulCreations,
       failedCreations: failedCreations,
-      error: 'There was an errorgetting the Titolo Info!'
+      error: 'There was an processing the Biglietto Cessione!'
     });
   }
 });
