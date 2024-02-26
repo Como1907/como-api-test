@@ -1060,6 +1060,48 @@ getPlanetTitoloEsteso = async (params) => {
   return results;
 }
 
+const getPlanetTitoloInfoCessione = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of Array.isArray(params) ? params : [params]) {
+    try {
+      const response = await axiosClient.get('/api/Titolo/InfoCessione', {
+        params: {
+          titoloId: parseInt(param.ticket_issue_response.id),
+          eventoId: parseInt(param.info_esteso.eventi[0].id),
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          ...param,
+          info_cessione: response.data
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
 getPlaNetTitoloIsCedibile = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
   const results = [];
@@ -1235,6 +1277,6 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    getBigliettoIsUtilizzatore, checkVroTicketIssueEligible, issueSingleMatchTickets, 
                    issueSeasonTickets, getPlaNetTitoloStato, getPlaNetTitoloInfo, 
                    getPlaNetTitoloInfoBySigilloFiscale, getPlanetEventPricing, getTesseraTifoso, 
-                   tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti,
+                   tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti, getPlanetTitoloInfoCessione,
                    getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferSeasonTicketToPerson, 
                    transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder };
