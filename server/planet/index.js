@@ -1273,29 +1273,27 @@ getTitoliAcquistabili = async (params) => {
 
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
   
-  for (const param of params) {
-    try {
-      const response = await axiosClient.get('/api/Titolo/GetTitoliAcquistabili', {
-        params: {
-          eventoId: parseInt(param.eventoId),
-          tipoAbbonamentoId: parseInt(param.tipoAbbonamentoId)
-        }
-      });
-      results.push({
-        success: true,
-        dataPlanet: response.data,
-        data: {
-          max_seats: response.data
-        }
-      });
-    } catch (error) {
-      console.log(error)
-      results.push({
-        success: false,
-        error: error,
-        param
-      });
-    }
+  try {
+    const response = await axiosClient.get('/api/Titolo/GetTitoliAcquistabili', {
+      params: {
+        eventoId: parseInt(params.eventoId),
+        tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId)
+      }
+    });
+    results.push({
+      success: true,
+      dataPlanet: response.data,
+      data: {
+        max_seats: response.data
+      }
+    });
+  } catch (error) {
+    console.log(error)
+    results.push({
+      success: false,
+      error: error,
+      param
+    });
   }
 
   return results;
@@ -1315,29 +1313,27 @@ getTitoliAcquistabiliAbbonamento = async (params) => {
 
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
   
-  for (const param of params) {
-    try {
-      const response = await axiosClient.get('/api/Titolo/GetTitoliAcquistabiliAbbonamento', {
-        params: {
-          acquirenteId: parseInt(param.acquirenteId),
-          tipoAbbonamentoId: parseInt(param.tipoAbbonamentoId)
-        }
-      });
-      results.push({
-        success: true,
-        dataPlanet: response.data,
-        data: {
-          max_seats: response.data
-        }
-      });
-    } catch (error) {
-      console.log(error)
-      results.push({
-        success: false,
-        error: error,
-        param
-      });
-    }
+  try {
+    const response = await axiosClient.get('/api/Titolo/GetTitoliAcquistabiliAbbonamento', {
+      params: {
+        acquirenteId: parseInt(params.acquirenteId),
+        tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId)
+      }
+    });
+    results.push({
+      success: true,
+      dataPlanet: response.data,
+      data: {
+        max_seats: response.data
+      }
+    });
+  } catch (error) {
+    console.log(error)
+    results.push({
+      success: false,
+      error: error,
+      param
+    });
   }
 
   return results;
@@ -1355,28 +1351,26 @@ getMappaPostiAbbonamentoInfo = async (params) => {
   }
 
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
-  
-  for (const param of params) {
-    try {
-      const response = await axiosClient.get('/api/Mappa/PostiAbbonamentoInfo', {
-        params: {
-          postoId: parseInt(param.postoId),
-          tipoAbbonamentoId: parseInt(param.tipoAbbonamentoId)
-        }
-      });
-      results.push({
-        success: true,
-        dataPlanet: response.data,
-        data: response.data
-      });
-    } catch (error) {
-      console.log(error)
-      results.push({
-        success: false,
-        error: error,
-        param
-      });
-    }
+
+  try {
+    const response = await axiosClient.get('/api/Mappa/PostiAbbonamentoInfo', {
+      params: {
+        postoId: parseInt(params.postoId),
+        tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId)
+      }
+    });
+    results.push({
+      success: true,
+      dataPlanet: response.data,
+      data: response.data
+    });
+  } catch (error) {
+    console.log(error)
+    results.push({
+      success: false,
+      error: error,
+      param
+    });
   }
 
   return results;
