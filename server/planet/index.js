@@ -686,22 +686,55 @@ const checkVroTicketIssueEligible = async (params) => {
   
   for (const param of params) {
     try {
-      const response = await axiosClient.get('/api/Autorizzazione/VerificaPersona', {
-        params: {
-          personaId: parseInt(param.persona_id),
-          puntovenditaId: 10,
-          isAbbonamento: false
-        }
-      });
-      results.push({
-        success: true,
-        dataPlanet: response.data,
-        data: {
-          ...param,
-          is_eligible: response.data.risultato
-        }
-      });
+
+      let responseSC
+      let response 
+      
+      console.log('######## typeof param.codiceFiscaleSocieta #############')
+      console.log(typeof param.codiceFiscaleSocieta)
+     
+      if (typeof param.codiceFiscaleSocieta === 'string') {
+        
+        console.log('Calling Autorizzazione/VerificaTesseraTifoso')
+        console.log(param.codiceFiscaleSocieta)
+        console.log(param.codiceTesseraTifoso)
+        responseSC = await axiosClient.get('/api/Autorizzazione/VerificaTesseraTifoso', {
+          params: {
+            codiceFiscaleSocieta: param.codiceFiscaleSocieta,
+            codiceTesseraTifoso: param.codiceTesseraTifoso,
+          }
+        });
+        results.push({
+          success: true,
+          dataPlanet: responseSC.data,
+          data: {
+            ...param,
+            is_eligible: responseSC.data.risultato
+          }
+        });
+        
+      } else {
+
+        console.log('Calling Autorizzazione/VerificaPersona')
+        response = await axiosClient.get('/api/Autorizzazione/VerificaPersona', {
+          params: {
+            personaId: parseInt(param.persona_id),
+            puntovenditaId: 10,
+            isAbbonamento: false
+          }
+        });
+        results.push({
+          success: true,
+          dataPlanet: response.data,
+          data: {
+            ...param,
+            is_eligible: response.data.risultato
+          }
+        });
+      }
+
     } catch (error) {
+      console.log(error)
       results.push({
         success: false,
         error: error,
@@ -1268,6 +1301,128 @@ const transferTicketToPerson = async (params) => {
   return results;
 };
 
+//Get Max Ticket per event for 1 persona
+getTitoliAcquistabili = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.get('/api/Titolo/GetTitoliAcquistabili', {
+        params: {
+          eventoId: parseInt(param.eventoId),
+          tipoAbbonamentoId: parseInt(param.tipoAbbonamentoId)
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          max_seats: response.data
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
+//Get Max Subscription for 1 persona
+getTitoliAcquistabiliAbbonamento = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.get('/api/Titolo/GetTitoliAcquistabiliAbbonamento', {
+        params: {
+          acquirenteId: parseInt(param.acquirenteId),
+          tipoAbbonamentoId: parseInt(param.tipoAbbonamentoId)
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: {
+          max_seats: response.data
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
+
+getMappaPostiAbbonamentoInfo = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+  const results = [];
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+  
+  for (const param of params) {
+    try {
+      const response = await axiosClient.get('/api/Mappa/PostiAbbonamentoInfo', {
+        params: {
+          postoId: parseInt(param.postoId),
+          tipoAbbonamentoId: parseInt(param.tipoAbbonamentoId)
+        }
+      });
+      results.push({
+        success: true,
+        dataPlanet: response.data,
+        data: response.data
+      });
+    } catch (error) {
+      console.log(error)
+      results.push({
+        success: false,
+        error: error,
+        param
+      });
+    }
+  }
+
+  return results;
+}
 
 module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
                    getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
@@ -1279,4 +1434,6 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto,
                    getPlaNetTitoloInfoBySigilloFiscale, getPlanetEventPricing, getTesseraTifoso, 
                    tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti, getPlanetTitoloInfoCessione,
                    getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferSeasonTicketToPerson, 
-                   transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder };
+                   transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder,
+                   getMappaPostiAbbonamentoInfo, getTitoliAcquistabiliAbbonamento, getTitoliAcquistabili
+                  };
