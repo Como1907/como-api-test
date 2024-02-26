@@ -1319,7 +1319,7 @@ getTitoliAcquistabili = async (params) => {
     const response = await axiosClient.get('/api/Titolo/GetTitoliAcquistabili', {
       params: {
         eventoId: parseInt(params.eventoId),
-        tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId)
+        acquirenteId: parseInt(params.acquirenteId)
       }
     });
     return {
