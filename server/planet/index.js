@@ -1280,20 +1280,16 @@ getTitoliAcquistabili = async (params) => {
         tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId)
       }
     });
-    results.push({
+    return {
       success: true,
-      dataPlanet: response.data,
-      data: {
-        max_seats: response.data
-      }
-    });
+      data: { max_seats: response.data }
+    };
   } catch (error) {
     console.log(error)
-    results.push({
+    return {
       success: false,
-      error: error,
-      param
-    });
+      error: error
+    };
   }
 
   return results;
@@ -1320,23 +1316,17 @@ getTitoliAcquistabiliAbbonamento = async (params) => {
         tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId)
       }
     });
-    results.push({
+    return {
       success: true,
-      dataPlanet: response.data,
-      data: {
-        max_seats: response.data
-      }
-    });
+      data: { max_seats: response.data }
+    };
   } catch (error) {
     console.log(error)
-    results.push({
+    return {
       success: false,
-      error: error,
-      param
-    });
+      error: error
+    };
   }
-
-  return results;
 }
 
 getMappaPostiAbbonamentoInfo = async (params) => {
@@ -1359,18 +1349,16 @@ getMappaPostiAbbonamentoInfo = async (params) => {
         tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId)
       }
     });
-    results.push({
+    return {
       success: true,
-      dataPlanet: response.data,
-      data: response.data
-    });
+      data: { max_seats: response.data }
+    };
   } catch (error) {
     console.log(error)
-    results.push({
+    return {
       success: false,
-      error: error,
-      param
-    });
+      error: error
+    };
   }
 
   return results;
