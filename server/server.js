@@ -3,7 +3,7 @@ const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendTic
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
-        getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, 
+        getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, getMappaBlocchi,
         getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
         getPlanetComuni, getPlanetsocietaSportiva, getPlaNetSeasonTickets, 
         getPlaNetSeasonTribunas, getPlaNetSeasonEvents, utenzaAddPersona, 
@@ -198,8 +198,9 @@ app.get('/get-single-tickets', async (req, res) => {
 });
 
 // #############################################################################
-// ############################ PLANET ACTIONS ###############################
+// ############################ PLANET ACTIONS #################################
 // #############################################################################
+
 app.get('/get-planet-token', async (req, res) => {
   const result = await getPlanetToken();
 
@@ -374,9 +375,29 @@ app.get('/planet-posti-liberi-biglietto', async (req, res) => {
   }
 });
 
+// Get Blocks Info
+app.get('/mappa-blocchi', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getMappaBlocchi(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Stadium Blocks'
+    });
+  }
+});
+
 
 // Get Seat Info
-app.get('/planet-mappa-postoInfo', async (req, res) => {
+app.get('/planet-mappa-postoinfo', async (req, res) => {
 
   console.log('request params')
   console.log(req.query)
