@@ -1408,7 +1408,6 @@ getTitoliAcquistabiliAbbonamento = async (params) => {
 
 getMappaPostiAbbonamentoInfo = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
-  const results = [];
 
   if (!plannetAccessTokenResponse.success) {
     return {
@@ -1428,7 +1427,7 @@ getMappaPostiAbbonamentoInfo = async (params) => {
     });
     return {
       success: true,
-      data: { max_seats: response.data }
+      data: response.data
     };
   } catch (error) {
     console.log(error)
@@ -1437,8 +1436,6 @@ getMappaPostiAbbonamentoInfo = async (params) => {
       error: error
     };
   }
-
-  return results;
 }
 
 module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
