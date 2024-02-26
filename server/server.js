@@ -593,7 +593,7 @@ app.get('/tessera-tifoso', async (req, res) => {
 
 
 // Check Supporter Card in VRO
-app.get('/autorizzazione-verificavesseravifoso', async (req, res) => {
+app.get('/autorizzazione-verificatesseratifoso', async (req, res) => {
 
   console.log('request params')
   console.log(req.query)

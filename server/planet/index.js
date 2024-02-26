@@ -686,22 +686,55 @@ const checkVroTicketIssueEligible = async (params) => {
   
   for (const param of params) {
     try {
-      const response = await axiosClient.get('/api/Autorizzazione/VerificaPersona', {
-        params: {
-          personaId: parseInt(param.persona_id),
-          puntovenditaId: 10,
-          isAbbonamento: false
-        }
-      });
-      results.push({
-        success: true,
-        dataPlanet: response.data,
-        data: {
-          ...param,
-          is_eligible: response.data.risultato
-        }
-      });
+
+      let responseSC
+      let response 
+      
+      console.log('######## typeof param.codiceFiscaleSocieta #############')
+      console.log(typeof param.codiceFiscaleSocieta)
+     
+      if (typeof param.codiceFiscaleSocieta === 'string') {
+        
+        console.log('Calling Autorizzazione/VerificaTesseraTifoso')
+        console.log(param.codiceFiscaleSocieta)
+        console.log(param.codiceTesseraTifoso)
+        responseSC = await axiosClient.get('/api/Autorizzazione/VerificaTesseraTifoso', {
+          params: {
+            codiceFiscaleSocieta: param.codiceFiscaleSocieta,
+            codiceTesseraTifoso: param.codiceTesseraTifoso,
+          }
+        });
+        results.push({
+          success: true,
+          dataPlanet: responseSC.data,
+          data: {
+            ...param,
+            is_eligible: responseSC.data.risultato
+          }
+        });
+        
+      } else {
+
+        console.log('Calling Autorizzazione/VerificaPersona')
+        response = await axiosClient.get('/api/Autorizzazione/VerificaPersona', {
+          params: {
+            personaId: parseInt(param.persona_id),
+            puntovenditaId: 10,
+            isAbbonamento: false
+          }
+        });
+        results.push({
+          success: true,
+          dataPlanet: response.data,
+          data: {
+            ...param,
+            is_eligible: response.data.risultato
+          }
+        });
+      }
+
     } catch (error) {
+      console.log(error)
       results.push({
         success: false,
         error: error,
