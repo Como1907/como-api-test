@@ -151,7 +151,9 @@ const sendFixtureTicketTransferToPersonEmail = async ({sender, receiver}, ticket
 
   try {
     await sgMail.send(msgReceiver);
-    await sgMail.send(msgSender);
+    if (sender !== '') {
+      await sgMail.send(msgSender);
+    }
 
     return true;
   } catch (error) {
@@ -188,7 +190,9 @@ const sendSeasonTicketTransferToPersonEmail = async ({sender, receiver}, ticket,
 
   try {
     await sgMail.send(msgReceiver);
-    await sgMail.send(msgSender);
+    if (sender !== '') {
+      await sgMail.send(msgSender);
+    }
 
     return true;
   } catch (error) {
