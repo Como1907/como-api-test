@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail } = require('./email/mail.js');
+const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail, sendFailureIssueTicketsEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
@@ -718,7 +718,7 @@ app.post('/biglietto-emettiesteso', async (req, res) => {
     });
   } else {
     const successfulCreations = responses.filter(response => response.success).map(response => response.data);
-    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, user: response.user }));
+    const failedCreations = responses.filter(response => !response.success).map(response => ({ error: response.error, data: response.data }));
 
     res.status(500).json({
       success: false,
@@ -1148,6 +1148,24 @@ app.post('/send-transfer-season-ticket-email', async (req, res) => {
   }
 
   const emailSent = await sendSeasonTicketTransferToPersonEmail(email, ticket, language, ticketsPdf);
+  console.log('emailSent', emailSent)
+
+  if (emailSent) {
+    res.status(200).json({ message: 'Email sent successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error sending the email' });
+  }
+});
+
+app.post('/send-failure-issue-tickets-email', async (req, res) => {
+  console.log('Sending email',req.body)
+  const { email, ticket, language } = req.body.params;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const emailSent = await sendFailureIssueTicketsEmail(email, ticket, language);
   console.log('emailSent', emailSent)
 
   if (emailSent) {

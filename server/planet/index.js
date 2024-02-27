@@ -895,7 +895,7 @@ const issueSingleMatchTickets = async (params) => {
       results.push({
         success: false,
         error: error.response.data,
-        param
+        data: param
       });
     }
     

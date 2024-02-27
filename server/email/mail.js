@@ -204,6 +204,227 @@ const sendSeasonTicketTransferToPersonEmail = async ({sender, receiver}, ticket,
   }
 };
 
+const sendFailureIssueTicketsEmail = async (email, ticket, language) => {
+  let subject
+  if (language == 'en') {
+    subject = 'Your COMO 1907 Ticket Purchase - ' + ticket.fixture_name + ' - Failed'
+  }
+  else if (language == 'it') {
+    subject = 'Il tuo acquisto del biglietto COMO 1907 - ' + ticket.fixture_name + ' - non riuscito'
+  }
+  const msg = {
+    to: email,
+    from: process.env.EMAIL_FROM,
+    subject: subject,
+    html: emailTemplateFailureIssueTickets(ticket, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
+  };
+
+  try {
+    await sgMail.send(msg);
+    return true;
+  } catch (error) {
+    console.error(error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
+    return false;
+  }
+};
+
+const emailTemplateFailureIssueTickets = (ticket, language, homePageTitle, logoImageUrl) => {
+  if (language == 'en') {
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+          <title>COMO 1907 - Your Ticket Purchase Failed</title>
+        </head>
+        <body>
+          <div class="email-card" style="width: 95%; max-width: 590px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #000;">
+            <div class="email-card
+            __header" style="height: 5em; background-color: #252F3D; width: 100%; color: #fff; margin-bottom: 0; display: grid; grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr);">
+              <div style="display: flex; margin: 0 auto;">
+                <div style="width: 40px;">
+                  <img src="${logoImageUrl}" alt="Logo" style="width: 100%; margin-top: 10px" />
+                </div>
+                <h2 style="font-size: 1.2em; margin-bottom: 1em; margin: 1.3em 0;">${homePageTitle}</h2>
+              </div>
+            </div>
+
+            <section class="card-body" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; border: 0.5px solid rgba(149, 157, 165, 0.2); padding: 2em;">
+              <h3>Your Ticket Purchase Failed</h3>
+              <div style="text-align: justify;">
+
+                <p>
+                We regret to inform you that your ticket purchase for the ${ticket.fixture_name} Match Event has failed. The ticket purchase has not been processed and the Digital Ticket(s) have not been added to your account.
+                  <br>
+                  <br>
+                  Please note the following important information:
+                  <br>
+                  <br>
+                  The ticket(s) will not be added to your account and will not be valid for entry. The ticket purchase has not been processed and the Digital Ticket(s) have not been added to your account.
+                  <br>
+                  <br>
+                  <div style="width:100%">
+                    <p style="font-size:13px">
+                      Below are the details of your ticket purchase:<br>
+                    </p>
+                    ${ticket.failedCreations.map(failedCreation => `
+                      <div style="margin-bottom: 20px;">
+                        <p style="font-size: 13px; margin: 0;">
+                          <strong>Error:</strong> ${failedCreation.error.Message}
+                        </p>
+                        <p style="font-size: 13px;">
+                          <strong>Match Event:</strong> ${failedCreation.data.modelloBiglietto.eventoId} - ${failedCreation.data.modelloBiglietto.postoLabel}
+                        </p>
+                        <p style="font-size: 13px;">
+                          <strong>Seat:</strong> ${failedCreation.data.modelloBiglietto.codicePosto}, ${failedCreation.data.modelloBiglietto.fila}
+                        </p>
+                        <p style="font-size: 13px;">
+                          <strong>Gate:</strong> ${failedCreation.data.modelloBiglietto.varco}
+                        </p>
+                      </div>
+                    `).join('')}
+                    <div style="display:flex;width:100%">
+                      <div style="width:100%">
+                        <div class="mb-1">
+                          <p class="my-025" style="font-size:13px">
+                            Purchase Date<br>
+                            ${format.asString('dd/MM/yyyy hh:mm', new Date(ticket.created + (60 * 60 * 1000) ))}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <p style="font-size:13px;text-align: center;">
+                      We apologize for the inconvenience and hope you will try again.
+                      </p>
+                      <p style="font-size:13px;text-align: center;">
+                        We hope you have a great time at the match event!
+                      </p>
+                    </div>
+                  </div>
+                </p>
+              </div>
+            </section>
+            <footer style="text-align: center;">
+              <section style="padding: 1em;border-top: 1px solid #ccc; border-right: 0.5px solid rgba(149,157,165,0.2);border-left: 0.5px solid rgba(149,157,165,0.2);">
+                <div>
+                  <p>
+                  Como 1907 will never email you and ask you to disclose or verify your password, credit card, or banking account number.
+                  </p>
+                </div>
+              </section>
+              <section style="background-color: #f0f2f3;padding: 2em;">
+                <p style="width: 90%;margin: auto;font-size: .75em;">
+                This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
+                </p>
+              </section>
+            </footer>
+          </div>
+        </body>
+      </html>
+    `;
+  } else if (language == 'it') {
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+          <title>COMO 1907 - Il tuo acquisto del biglietto è fallito</title>
+        </head>
+        <body>
+          <div class="email-card
+          " style="width: 95%; max-width: 590px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #000;">
+
+            <div class="email-card__header" style="height: 5em; background-color: #252F3D; width: 100%; color: #fff; margin-bottom: 0; display: grid; grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr);">
+              <div style="display: flex; margin: 0 auto;">
+                <div style="width: 40px;">
+                  <img src="${logoImageUrl}" alt="Logo" style="width: 100%; margin-top: 10px" />
+                </div>
+                <h2 style="font-size: 1.2em; margin-bottom: 1em; margin: 1.3em 0;">${homePageTitle}</h2>
+              </div>
+            </div>
+
+            <section class="card-body" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; border: 0.5px solid rgba(149, 157, 165, 0.2); padding: 2em;">
+              <h3>Il tuo acquisto del biglietto è fallito</h3>
+              <div style="text-align: justify;">
+
+                <p>
+                Ci dispiace informarti che il tuo acquisto del biglietto per l'evento della partita ${ticket.fixture_name} è fallito. L'acquisto del biglietto non è stato elaborato e i biglietti digitali non sono stati aggiunti al tuo account.
+                  <br>
+                  <br>
+                  Si prega di notare le seguenti informazioni importanti:
+                  <br>
+                  <br>
+                  Il/i biglietto/i non verrà/nno aggiunto/i al tuo account e non sarà/nno valido/i per l'ingresso. L'acquisto del biglietto non è stato elaborato e i biglietti digitali non sono stati aggiunti al tuo account.
+                  <br>
+                  <br>
+                  <div style="width:100%">
+                    <p style="font-size:13px">
+                    Di seguito sono riportati i dettagli del tuo acquisto del biglietto:<br>
+                    </p>
+                    ${ticket.failedCreations.map(failedCreation => `
+                      <div style="margin-bottom: 20px;">
+                        <p style="font-size: 13px; margin: 0;">
+                          <strong>Error:</strong> ${failedCreation.error.Message}
+                        </p>
+                        <p style="font-size: 13px;">
+                          <strong>Match Event:</strong> ${failedCreation.data.modelloBiglietto.eventoId} - ${failedCreation.data.modelloBiglietto.postoLabel}
+                        </p>
+                        <p style="font-size: 13px;">
+                          <strong>Seat:</strong> ${failedCreation.data.modelloBiglietto.codicePosto}, ${failedCreation.data.modelloBiglietto.fila}
+                        </p>
+                        <p style="font-size: 13px;">
+                          <strong>Gate:</strong> ${failedCreation.data.modelloBiglietto.varco}
+                        </p>
+                      </div>
+                    `).join('')}
+                    <div style="display:flex;width:100%">
+                      <div style="width:100%">
+                        <div class="mb-1">
+                          <p class="my-025" style="font-size:13px">
+                            Data di acquisto<br>
+                            ${format.asString('dd/MM/yyyy hh:mm', new Date(ticket.created + (60 * 60 * 1000) ))}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <p style="font-size:13px;text-align: center;">
+                      Ci scusiamo per l'inconveniente e speriamo che tu riproverai.
+                      </p>
+                      <p style="font-size:13px;text-align: center;">
+                        Ci auguriamo che tu ti div
+                      </p>
+                    </div>
+                  </div>
+                </p>
+              </div>
+            </section>
+            <footer style="text-align: center;">
+              <section style="padding: 1em;border-top: 1px solid #ccc; border-right: 0.5px solid rgba(149,157,165,0.2);border-left: 0.5px solid rgba(149,157,165,0.2);">
+                <div>
+
+                  <p>
+                  Como 1907 non ti invierà mai un'e-mail chiedendoti di rivelare o verificare la tua password, carta di credito o numero di conto bancario.
+                  </p>
+                </div>
+              </section>
+              <section style="background-color: #f0f2f3;padding: 2em;">
+                <p style="width: 90%;margin: auto;font-size: .75em;">
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
+                </p>
+              </section>
+            </footer>
+          </div>
+        </body>
+      </html>
+    `;
+  }
+}
+
 const emailTemplateSeasonTicketTransferToReceiver = (ticket, language, homePageTitle, logoImageUrl) => {
   if (language == 'en') {
     return `
@@ -1372,4 +1593,4 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
   }
 };
 
-module.exports = { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail };
+module.exports = { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail, sendFailureIssueTicketsEmail };
