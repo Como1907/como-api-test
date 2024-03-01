@@ -13,7 +13,7 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getEventOrgani
         tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti, getPlanetTitoloInfoCessione,
         getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferSeasonTicketToPerson, 
         transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder,
-        getMappaPostiAbbonamentoInfo, getTitoliAcquistabiliAbbonamento, getTitoliAcquistabili }
+        getMappaPostiAbbonamentoInfo, getTitoliAcquistabiliAbbonamento, getTitoliAcquistabili, getPlanetEventDetail }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -231,6 +231,22 @@ app.get('/utenza-organizzatori', async (req, res) => {
 
 app.get('/planet-events', async (req, res) => {
   const response = await getPlanetEvents();
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+app.get('/planet-event-detail', async (req, res) => {
+  const response = await getPlanetEventDetail(req.query);
 
   if (response.success) {
     res.status(200).json({
