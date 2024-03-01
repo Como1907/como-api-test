@@ -92,6 +92,7 @@ const getPlanetEvents = async (token) => {
       params: {
         periodoInizio: '2024-01-01T00:00:00',
         periodoFine: '2024-06-01T00:00:00',
+        // organizzatoreId: 1,
         tipoMappa: 0
       }
     });
