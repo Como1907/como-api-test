@@ -44,6 +44,37 @@ const getPlanetToken = async () => {
   }
 };
 
+const getEventOrganizers = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Utenza/Organizzatori', {
+      params: {
+        soloAttivi: false
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
 const getPlanetEvents = async (token) => {
   const plannetAccessTokenResponse = await getPlanetToken()
 
@@ -1469,7 +1500,7 @@ getMappaPostiAbbonamentoInfo = async (params) => {
   }
 }
 
-module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
+module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getEventOrganizers,
                    getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, getMappaBlocchi,
                    getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
                    getPlanetComuni, getPlanetsocietaSportiva, getPlaNetSeasonTickets, 

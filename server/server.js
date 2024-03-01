@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail, sendFailureIssueFixtureTicketsEmail, sendFailureIssueSeasonTicketsEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
-const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, 
+const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getEventOrganizers,
         getMappaPostoInfo, getMappaPostiInfo, getMappaBloccaPosto, getMappaBlocchi,
         getMappaSbloccaPosto, getPlanetNazioni, getPlanetProvince, 
         getPlanetComuni, getPlanetsocietaSportiva, getPlaNetSeasonTickets, 
@@ -209,6 +209,22 @@ app.get('/get-planet-token', async (req, res) => {
   } else {
     res.status(500).json({
       error: result.error
+    });
+  }
+});
+
+app.get('/utenza-organizzatori', async (req, res) => {
+  const response = await getEventOrganizers(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Event Organizers'
     });
   }
 });

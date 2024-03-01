@@ -1382,7 +1382,7 @@ const emailTemplateTicketPurchase = (ticket, language, homePageTitle, logoImageU
                         <div class="mb-1">
                           <p class="my-025" style="font-size:13px">
                             Payment Method<br>
-                            CARD
+                            ${ticket.payment_type}
                           </p>
                         </div>
                         <div class="mb-1">
@@ -1496,7 +1496,7 @@ const emailTemplateTicketPurchase = (ticket, language, homePageTitle, logoImageU
                         <div class="mb-1">
                           <p class="my-025" style="font-size:13px">
                             Metodo di pagamento<br>
-                            CARD
+                            ${ticket.payment_type}
                           </p>
                         </div>
                         <div class="mb-1">
@@ -1615,7 +1615,7 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
                         <div class="mb-1">
                           <p class="my-025" style="font-size:13px">
                             Payment Method<br>
-                            CARD
+                            ${ticket.payment_type}
                           </p>
                         </div>
                         <div class="mb-1">
@@ -1729,7 +1729,7 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
                         <div class="mb-1">
                           <p class="my-025" style="font-size:13px">
                             Metodo di pagamento<br>
-                            CARD
+                            ${ticket.payment_type}
                           </p>
                         </div>
                         <div class="mb-1">
