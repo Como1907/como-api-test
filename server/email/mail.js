@@ -135,16 +135,19 @@ const sendFixtureTicketTransferToPersonEmail = async ({sender, receiver}, ticket
     : `Your COMO 1907 Ticket Transfer Success - ${ticket.fixture_name}`;
 
   const msgReceiver = {
-    to: receiver, 
-    from: process.env.EMAIL_FROM, 
+    to: receiver,
+    from: process.env.EMAIL_FROM,
     subject: subjectReceiver,
     html: emailTemplateTicketTransferToReceiver(ticket, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
-    attachments: ticketsPdf
   };
 
+  if (!!ticketsPdf) {
+    msgReceiver['attachments'] = ticketsPdf
+  }
+
   const msgSender = {
-    to: sender, 
-    from: process.env.EMAIL_FROM, 
+    to: sender,
+    from: process.env.EMAIL_FROM,
     subject: subjectSender,
     html: emailTemplateTicketTransferToSender(ticket, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
   };
@@ -178,8 +181,11 @@ const sendSeasonTicketTransferToPersonEmail = async ({sender, receiver}, ticket,
     from: process.env.EMAIL_FROM,
     subject: subjectReceiver,
     html: emailTemplateSeasonTicketTransferToReceiver(ticket, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
-    attachments: ticketsPdf
   };
+
+  if (!!ticketsPdf) {
+    msgReceiver['attachments'] = ticketsPdf
+  }
 
   const msgSender = {
     to: sender,
@@ -277,7 +283,7 @@ const emailTemplateFailureIssueSeasonTickets = (ticket, language, homePageTitle,
               <h2 style="font-size: 1.2em; margin-bottom: 1em; margin: 1.3em 0;">${homePageTitle}</h2>
             </div>
           </div>
-    
+
           <section class="card-body" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; border: 0.5px solid rgba(149, 157, 165, 0.2); padding: 2em;">
             <h3>Your Season Ticket Purchase Failed</h3>
             <div style="text-align: justify;">
@@ -910,7 +916,7 @@ const emailTemplateSeasonTicketTransferToSender = (ticket, language, homePageTit
             </div>
 
             <section class="card-body" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; border: 0.5px solid rgba(149, 157, 165, 0.2); padding: 2em;">
-              <h3>Il tuo trasferimento dell'abbonamento è riuscito!</h3> 
+              <h3>Il tuo trasferimento dell'abbonamento è riuscito!</h3>
               <div style="text-align: justify;">
                 <p>
                 Siamo lieti di informarti che il tuo trasferimento dell'abbonamento per l'abbonamento ${ticket.season_ticket_name} è stato completato con successo. L'abbonamento è stato trasferito al destinatario e i biglietti digitali sono stati rimossi dal tuo account.
