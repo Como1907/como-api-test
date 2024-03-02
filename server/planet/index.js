@@ -75,7 +75,7 @@ const getEventOrganizers = async (params) => {
   }
 };
 
-const getPlanetEvents = async (token) => {
+const getPlanetEvents = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
 
   if (!plannetAccessTokenResponse.success) {
@@ -91,8 +91,8 @@ const getPlanetEvents = async (token) => {
     const response = await axiosClient.get('/api/Evento/Eventi', {
       params: {
         periodoInizio: '2024-01-01T00:00:00',
-        periodoFine: '2024-06-01T00:00:00',
-        // organizzatoreId: 1,
+        periodoFine: '2024-12-31T00:00:00',
+        organizzatoreId: parseInt(params.organizzatoreId),
         tipoMappa: 0
       }
     });
@@ -152,6 +152,8 @@ const getPlaNetSeasonTickets = async (params) => {
 
   axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
 
+  console.log('params.organizzatoreId')
+  console.log(params.organizzatoreId)
   try {
     const response = await axiosClient.get('/api/Abbonamento/TipiAbbonamento', {
       params: {
