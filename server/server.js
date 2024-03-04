@@ -13,7 +13,9 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getEventOrgani
         tesseraTifosoRegistra, getAutVerificaTesseraTifoso, tesseraTifosoEmetti, getPlanetTitoloInfoCessione,
         getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferSeasonTicketToPerson, 
         transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder,
-        getMappaPostiAbbonamentoInfo, getTitoliAcquistabiliAbbonamento, getTitoliAcquistabili, getPlanetEventDetail }
+        getMappaPostiAbbonamentoInfo, getTitoliAcquistabiliAbbonamento, getTitoliAcquistabili, getPlanetEventDetail,
+        getMappaBloccaPosti
+      }
         = require('./planet/index.js');
 const express = require('express');
 const app = express();
@@ -453,6 +455,26 @@ app.get('/planet-mappa-postiinfo', async (req, res) => {
   console.log('request params')
   console.log(req.query)
   const response = await getMappaPostiInfo(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+// Lock Seat Subscription
+app.get('/planet-mappa-bloccaposti', async (req, res) => {
+
+  console.log('request params')
+  console.log(req.query)
+  const response = await getMappaBloccaPosti(req.query);
 
   if (response.success) {
     res.status(200).json({
