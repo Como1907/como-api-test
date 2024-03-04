@@ -232,7 +232,7 @@ app.get('/utenza-organizzatori', async (req, res) => {
 });
 
 app.get('/planet-events', async (req, res) => {
-  const response = await getPlanetEvents();
+  const response = await getPlanetEvents(req.query);
 
   if (response.success) {
     res.status(200).json({
