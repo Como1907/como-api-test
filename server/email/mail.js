@@ -264,6 +264,274 @@ const sendFailureIssueSeasonTicketsEmail =  async (email, ticket, language) => {
   }
 }
 
+const sendFirstAlertCollectibleSoldEmail = async (email, collectible, language) => {
+  let subject
+  if (language == 'en') {
+    subject = `Success Alert: ${collectible.name} Collectible Achieves First Sales Goal 🚀`
+  }
+  else if (language == 'it') {
+    subject = `Success Alert: ${collectible.name} Collectible Achieves First Sales Goal 🚀`
+  }
+  const msg = {
+    to: email,
+    from: process.env.EMAIL_FROM,
+    subject: subject,
+    html: emailTemplateFirstAlertCollectibleSold(collectible, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
+  };
+
+  try {
+    await sgMail.send(msg);
+    return true;
+  } catch (error) {
+    console.error(error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
+    return false;
+  }
+}
+
+const sendSecondAlertCollectibleSoldEmail = async (email, collectible, language) => {
+  let subject
+  if (language == 'en') {
+    subject = `Incredible! ${collectible.name} Collectible's Second Milestone Achieved ✨`
+  }
+  else if (language == 'it') {
+    subject = `Incredibile! Secondo traguardo raggiunto per il collezionabile ${collectible.name} ✨`
+  }
+
+  const msg = {
+    to: email,
+    from: process.env.EMAIL_FROM,
+    subject: subject,
+    html: emailTemplateSecondAlertCollectibleSold(collectible, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
+  };
+
+  try {
+    await sgMail.send(msg);
+    return true;
+  } catch (error) {
+    console.error(error);
+    if (error.response) {
+      console.error(error.response.body);
+    }
+    return false;
+  }
+}
+
+const emailTemplateFirstAlertCollectibleSold = (collectible, language, homePageTitle, logoImageUrl) => {
+  if (language == 'en') {
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>COMO 1907 - Success Alert: ${collectible.name} Collectible Achieves First Sales Goal 🚀</title>
+      </head>
+      <body>
+        <div class="email-card" style="width: 95%; max-width: 590px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #000;">
+          <div class="email-card__header" style="height: 5em; background-color: #252F3D; width: 100%; color: #fff; margin-bottom: 0; display: grid; grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr);">
+            <div style="display: flex; margin: 0 auto;">
+              <div style="width: 40px;">
+                <img src="${logoImageUrl}" alt="Logo" style="width: 100%; margin-top: 10px" />
+              </div>
+              <h2 style="font-size: 1.2em; margin-bottom: 1em; margin: 1.3em 0;">${homePageTitle}</h2>
+            </div>
+          </div>
+          <section class="card-body" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; border: 0.5px solid rgba(149, 157, 165, 0.2); padding: 2em;">
+            <h3>Success Alert: ${collectible.name} Collectible Achieves First Sales Goal 🚀</h3>
+            <div style="text-align: justify;">
+              <p>
+                We are thrilled to announce that the ${collectible.name} collectible has achieved its first sales goal. This is a significant milestone for the COMO 1907 community and the future of the club.
+                <br>
+                <br>
+                We want to thank you for your support and for being part of this historic moment. Your contribution has been instrumental in making this achievement possible.
+                <br>
+                <br>
+                We are excited to see the impact this will have on the club and the community. We look forward to sharing more updates with you in the future.
+                <br>
+                <br>
+                Thank you for being part of the COMO 1907 community.
+              </p>
+            </div>
+          </section>
+          <footer style="text-align: center;">
+            <section style="padding: 1em;border-top: 1px solid #ccc; border-right: 0.5px solid rgba(149,157,165,0.2);border-left: 0.5px solid rgba(149,157,165,0.2);">
+              <p>
+                Como 1907 will never email you and ask you to disclose or verify your password, credit card, or banking account number.
+              </p>
+            </section>
+            <section style="background-color: #f0f2f3;padding: 2em;">
+              <p style="width: 90%;margin: auto;font-size: .75em;">
+                This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our privacy policy.
+              </p>
+            </section>
+          </footer>
+        </div>
+      </body>
+    </html>
+    `;
+  } else if (language == 'it') {
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Allerta Successo: Collezionabile ${collectible.name} Raggiunge il Primo Obiettivo di Vendita 🚀</title>
+      </head>
+      <body>
+        <div class="email-card" style="width: 95%; max-width: 590px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #000;">
+          <div class="email-card__header" style="height: 5em; background-color: #252F3D; width: 100%; color: #fff; margin-bottom: 0; display: grid; grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr);">
+            <div style="display: flex; margin: 0 auto;">
+              <div style="width: 40px;">
+                <img src="${logoImageUrl}" alt="Logo" style="width: 100%; margin-top: 10px" />
+              </div>
+              <h2 style="font-size: 1.2em; margin-bottom: 1em; margin: 1.3em 0;">${homePageTitle}</h2>
+            </div>
+          </div>
+          <section class="card-body" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; border: 0.5px solid rgba(149, 157, 165, 0.2); padding: 2em;">
+            <h3>Allerta Successo: Collezionabile ${collectible.name} Raggiunge il Primo Obiettivo di Vendita 🚀</h3>
+            <div style="text-align: justify;">
+              <p>
+                Siamo entusiasti di annunciare che il collezionabile ${collectible.name} ha raggiunto il suo primo obiettivo di vendita. Questo è un traguardo significativo per la comunità COMO 1907 e il futuro del club.
+                <br>
+                <br>
+                Vogliamo ringraziarti per il tuo supporto e per essere parte di questo momento storico. Il tuo contributo è stato fondamentale per rendere possibile questo risultato.
+                <br>
+                <br>
+                Siamo entusiasti di vedere l'impatto che questo avrà sul club e sulla comunità. Non vediamo l'ora di condividere con te ulteriori aggiornamenti in futuro.
+                <br>
+                <br>
+                Grazie per essere parte della comunità COMO 1907.
+              </p>
+            </div>
+          </section>
+          <footer style="text-align: center;">
+            <section style="padding: 1em;border-top: 1px solid #ccc; border-right: 0.5px solid rgba(149,157,165,0.2);border-left: 0.5px solid rgba(149,157,165,0.2);">
+              <p>
+                Como 1907 non ti invierà mai un'e-mail chiedendoti di rivelare o verificare la tua password, carta di credito o numero di conto bancario.
+              </p>
+            </section>
+            <section style="background-color: #f0f2f3;padding: 2em;">
+              <p style="width: 90%;margin: auto;font-size: .75em;">
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra informativa sulla privacy.
+              </p>
+            </section>
+          </footer>
+        </div>
+      </body>
+    </html>
+    `;
+  }
+}
+
+const emailTemplateSecondAlertCollectibleSold = (collectible, language, homePageTitle, logoImageUrl) => {
+  if (language == 'en') {
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Incredible! ${collectible.name} Collectible's Second Milestone Achieved ✨</title>
+      </head>
+      <body>
+        <div class="email-card" style="width: 95%; max-width: 590px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #000;">
+          <div class="email-card__header" style="height: 5em; background-color: #252F3D; width: 100%; color: #fff; margin-bottom: 0; display: grid; grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr);">
+            <div style="display: flex; margin: 0 auto;">
+              <div style="width: 40px;">
+                <img src="${logoImageUrl}" alt="Logo" style="width: 100%; margin-top: 10px" />
+              </div>
+              <h2 style="font-size: 1.2em; margin-bottom: 1em; margin: 1.3em 0;">${homePageTitle}</h2>
+            </div>
+          </div>
+          <section class="card-body" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; border: 0.5px solid rgba(149, 157, 165, 0.2); padding: 2em;">
+            <h3>Incredible! ${collectible.name} Collectible's Second Milestone Achieved ✨</h3>
+            <div style="text-align: justify;">
+              <p>
+                We are thrilled to announce that the ${collectible.name} collectible has achieved its second milestone. This is a significant achievement for the COMO 1907 community and the future of the club.
+                <br>
+                <br>
+                We want to thank you for your support and for being part of this historic moment. Your contribution has been instrumental in making this achievement possible.
+                <br>
+                <br>
+                We are excited to see the impact this will have on the club and the community. We look forward to sharing more updates with you in the future.
+                <br>
+                <br>
+                Thank you for being part of the COMO 1907 community.
+              </p>
+            </div>
+          </section>
+          <footer style="text-align: center;">
+            <section style="padding: 1em;border-top: 1px solid #ccc; border-right: 0.5px solid rgba(149,157,165,0.2);border-left: 0.5px solid rgba(149,157,165,0.2);">
+              <p>
+                Como 1907 will never email you and ask you to disclose or verify your password, credit card, or banking account number.
+              </p>
+            </section>
+            <section style="background-color: #f0f2f3;padding: 2em;">
+              <p style="width: 90%;margin: auto;font-size: .75em;">
+                This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our privacy policy.
+              </p>
+            </section>
+          </footer>
+        </div>
+      </body>
+    </html>
+    `;
+  } else if (language == 'it') {
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Incredibile! Secondo traguardo raggiunto per il collezionabile ${collectible.name} ✨</title>
+      </head>
+      <body>
+        <div class="email-card" style="width: 95%; max-width: 590px; margin: 0 auto; font-family: Arial, Helvetica, sans-serif; color: #000;">
+          <div class="email-card
+          __header" style="height: 5em; background-color: #252F3D; width: 100%; color: #fff; margin-bottom: 0; display: grid; grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr);">
+            <div style="display: flex; margin: 0 auto;">
+              <div style="width: 40px;">
+                <img src="${logoImageUrl}" alt="Logo" style="width: 100%; margin-top: 10px" />
+              </div>
+              <h2 style="font-size: 1.2em; margin-bottom: 1em; margin: 1.3em 0;">${homePageTitle}</h2>
+            </div>
+          </div>
+          <section class="card-body" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; border: 0.5px solid rgba(149, 157, 165, 0.2); padding: 2em;">
+            <h3>Incredibile! Secondo traguardo raggiunto per il collezionabile ${collectible.name} ✨</h3>
+            <div style="text-align: justify;">
+              <p>
+                Siamo entusiasti di annunciare che il collezionabile ${collectible.name} ha raggiunto il suo secondo traguardo. Questo è un risultato significativo per la comunità COMO 1907 e il futuro del club.
+                <br>
+                <br>
+                Vogliamo ringraziarti per il tuo supporto e per essere parte di questo momento storico. Il tuo contributo è stato fondamentale per rendere possibile questo risultato.
+                <br>
+                <br>
+                Siamo entusiasti di vedere l'impatto che questo avrà sul club e sulla comunità. Non vediamo l'ora di condividere con te ulteriori aggiornamenti in futuro.
+                <br>
+                <br>
+                Grazie per essere parte della comunità COMO 1907.
+              </p>
+            </div>
+          </section>
+          <footer style="text-align: center;">
+            <section style="padding: 1em;border-top: 1px solid #ccc; border-right: 0.5px solid rgba(149,157,165,0.2);border-left: 0.5px solid rgba(149,157,165,0.2);">
+              <p>
+                Como 1907 non ti invierà mai un'e-mail chiedendoti di rivelare o verificare la tua password, carta di credito o numero di conto bancario.
+              </p>
+            </section>
+            <section style="background-color: #f0f2f3;padding: 2em;">
+              <p style="width: 90%;margin: auto;font-size: .75em;">
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra informativa sulla privacy.
+              </p>
+            </section>
+          </footer>
+        </div>
+      </body>
+    </html>
+    `;
+  }
+}
+
 const emailTemplateFailureIssueSeasonTickets = (ticket, language, homePageTitle, logoImageUrl) => {
   if (language == 'en') {
     return `
@@ -1799,4 +2067,4 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
   }
 };
 
-module.exports = { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail, sendFailureIssueFixtureTicketsEmail, sendFailureIssueSeasonTicketsEmail };
+module.exports = { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail, sendFailureIssueFixtureTicketsEmail, sendFailureIssueSeasonTicketsEmail, sendFirstAlertCollectibleSoldEmail, sendSecondAlertCollectibleSoldEmail };
