@@ -264,7 +264,7 @@ const sendFailureIssueSeasonTicketsEmail =  async (email, ticket, language) => {
   }
 }
 
-const sendFirstAlertCollectibleSoldEmail = async (email, collectible, language) => {
+const sendFirstAlertCollectibleSoldEmail = async (emails, collectible, language) => {
   let subject
   if (language == 'en') {
     subject = `Success Alert: ${collectible.name} Collectible Achieves First Sales Goal 🚀`
@@ -272,26 +272,34 @@ const sendFirstAlertCollectibleSoldEmail = async (email, collectible, language) 
   else if (language == 'it') {
     subject = `Success Alert: ${collectible.name} Collectible Achieves First Sales Goal 🚀`
   }
-  const msg = {
-    to: email,
-    from: process.env.EMAIL_FROM,
-    subject: subject,
-    html: emailTemplateFirstAlertCollectibleSold(collectible, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
-  };
 
-  try {
-    await sgMail.send(msg);
-    return true;
-  } catch (error) {
-    console.error(error);
-    if (error.response) {
-      console.error(error.response.body);
+  const results = []
+
+  for (let email of emails) {
+    const msg = {
+      to: email,
+      from: process.env.EMAIL_FROM,
+      subject: subject,
+      html: emailTemplateFirstAlertCollectibleSold(collectible, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
+    };
+
+    try {
+      await sgMail.send(msg);
+      results.push({email, success: true})
     }
-    return false;
+    catch (error) {
+      console.error(error);
+      if (error.response) {
+        console.error(error.response.body);
+      }
+      results.push({email, success: false, error: error.response ? error.response.body : error})
+    }
   }
+
+  return results
 }
 
-const sendSecondAlertCollectibleSoldEmail = async (email, collectible, language) => {
+const sendSecondAlertCollectibleSoldEmail = async (emails, collectible, language) => {
   let subject
   if (language == 'en') {
     subject = `Incredible! ${collectible.name} Collectible's Second Milestone Achieved ✨`
@@ -300,23 +308,29 @@ const sendSecondAlertCollectibleSoldEmail = async (email, collectible, language)
     subject = `Incredibile! Secondo traguardo raggiunto per il collezionabile ${collectible.name} ✨`
   }
 
-  const msg = {
-    to: email,
-    from: process.env.EMAIL_FROM,
-    subject: subject,
-    html: emailTemplateSecondAlertCollectibleSold(collectible, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
-  };
+  const results = []
 
-  try {
-    await sgMail.send(msg);
-    return true;
-  } catch (error) {
-    console.error(error);
-    if (error.response) {
-      console.error(error.response.body);
+  for (let email of emails) {
+    const msg = {
+      to: email,
+      from: process.env.EMAIL_FROM,
+      subject: subject,
+      html: emailTemplateSecondAlertCollectibleSold(collectible, language, 'COMO 1907', 'https://access-staging02.comofootball.com/img/logos/logo.png'),
+    };
+
+    try {
+      await sgMail.send(msg);
+      results.push({email, success: true})
+    } catch (error) {
+      console.error(error);
+      if (error.response) {
+        console.error(error.response.body);
+        results.push({email, success: false, error: error.response ? error.response.body : error})
+      }
     }
-    return false;
   }
+
+  return results
 }
 
 const emailTemplateFirstAlertCollectibleSold = (collectible, language, homePageTitle, logoImageUrl) => {
