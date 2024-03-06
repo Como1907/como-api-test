@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail, sendFailureIssueFixtureTicketsEmail, sendFailureIssueSeasonTicketsEmail } = require('./email/mail.js');
+const { sendOTP, sendTicketPurchaseEmail, sendSeasonTicketPurchaseEmail, sendFixtureTicketTransferToPersonEmail, sendSeasonTicketTransferToPersonEmail, sendFailureIssueFixtureTicketsEmail, sendFailureIssueSeasonTicketsEmail, sendFirstAlertCollectibleSoldEmail, sendSecondAlertCollectibleSoldEmail } = require('./email/mail.js');
 const { getSeasonTicketSeatsArray, getCollectibleOrdersReport, getSingleTickets} = require('./firebase/firebase.js');
 const { sendSmsOtp, verifySmsOtp } = require('./sms/index.js');
 const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getEventOrganizers,
@@ -1240,6 +1240,43 @@ app.post('/send-failure-issue-season-tickets-email', async (req, res) => {
   console.log('emailSent', emailSent)
 
   if (emailSent) {
+    res.status(200).json({ message: 'Email sent successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error sending the email' });
+  }
+});
+
+app.post('/send-first-alert-collectible-sold-email', async (req, res) => {
+  console.log('Sending email',req.body)
+  const { email, language, collectible } = req.body.params;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const emailSent = await sendFirstAlertCollectibleSoldEmail(email, collectible, language);
+  console.log('emailSent', emailSent)
+  const isSent = emailSent.some(email => email.success);
+  if (isSent) {
+    res.status(200).json({ message: 'Email sent successfully'});
+  } else {
+    res.status(500).json({ error: 'There was an error sending the email' });
+  }
+});
+
+app.post('/send-second-alert-collectible-sold-email', async (req, res) => {
+  console.log('Sending email',req.body)
+  const { email, language, collectible } = req.body.params;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const emailSent = await sendSecondAlertCollectibleSoldEmail(email, collectible, language);
+  console.log('emailSent', emailSent)
+
+  const isSent = emailSent.some(email => email.success);
+  if (isSent) {
     res.status(200).json({ message: 'Email sent successfully'});
   } else {
     res.status(500).json({ error: 'There was an error sending the email' });
