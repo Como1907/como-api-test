@@ -42,7 +42,7 @@ app.use(basicAuth({
 }));
 
 const stripe = (isFoundation) => {
-  const stripeSecretKey = isFoundation ? process.env.STRIPE_SECRET_KEY_FOUNDATION : process.env.STRIPE_SENT_SECRET_KEY;
+  const stripeSecretKey = isFoundation ? process.env.STRIPE_FONDAZIONE_SECRET_KEY : process.env.STRIPE_SENT_SECRET_KEY;
   
   return require('stripe')(stripeSecretKey, {
     apiVersion: '2020-08-27',
@@ -151,7 +151,7 @@ app.post('/webhook', async (req, res) => {
   res.sendStatus(200);
 });
 
-app.post('/webhook_sent', async (req, res) => {
+app.post('/webhook-sent', async (req, res) => {
   console.log('Webhook received webhook_sent', req.body)
   let data, eventType;
 
