@@ -42,7 +42,7 @@ app.use(basicAuth({
 }));
 
 const stripe = (isFoundation) => {
-  const stripeSecretKey = isFoundation ? process.env.STRIPE_FONDAZIONE_SECRET_KEY : process.env.STRIPE_SENT_SECRET_KEY;
+  const stripeSecretKey = isFoundation ? process.env.STRIPE_FOUNDATION_SECRET_KEY : process.env.STRIPE_SENT_SECRET_KEY;
   
   return require('stripe')(stripeSecretKey, {
     apiVersion: '2020-08-27',
@@ -122,7 +122,7 @@ app.post('/webhook', async (req, res) => {
     let event;
     let signature = req.headers['stripe-signature'];
     try {
-      event = stripe.webhooks.constructEvent(
+      event = stripe(true).webhooks.constructEvent(
         req.rawBody,
         signature,
         process.env.STRIPE_WEBHOOK_SECRET
@@ -161,7 +161,7 @@ app.post('/webhook-sent', async (req, res) => {
     let event;
     let signature = req.headers['stripe-signature'];
     try {
-      event = stripe.webhooks.constructEvent(
+      event = stripe(false).webhooks.constructEvent(
         req.rawBody,
         signature,
         process.env.STRIPE_SENT_WEBHOOK_SECRET
