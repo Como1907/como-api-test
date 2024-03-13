@@ -14,7 +14,7 @@ const { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, getEventOrgani
         getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferSeasonTicketToPerson, 
         transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder,
         getMappaPostiAbbonamentoInfo, getTitoliAcquistabiliAbbonamento, getTitoliAcquistabili, getPlanetEventDetail,
-        getMappaBloccaPosti
+        getMappaBloccaPosti, getMappaSbloccaPosti
       }
         = require('./planet/index.js');
 const express = require('express');
@@ -475,6 +475,26 @@ app.get('/planet-mappa-bloccaposti', async (req, res) => {
   console.log('request params')
   console.log(req.query)
   const response = await getMappaBloccaPosti(req.query);
+
+  if (response.success) {
+    res.status(200).json({
+      data: response.data,
+      success: true
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: 'There was an error getting the Planet Data'
+    });
+  }
+});
+
+// Unlock Seat Subscription
+app.get('/planet-mappa-sbloccaposti', async (req, res) => {
+
+  console.log('request params sbloccaposti season')
+  console.log(req.query)
+  const response = await getMappaSbloccaPosti(req.query);
 
   if (response.success) {
     res.status(200).json({

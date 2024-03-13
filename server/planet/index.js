@@ -545,6 +545,39 @@ const getMappaBloccaPosti = async (params) => {
   }
 };
 
+// Block Seat Subscription
+const getMappaSbloccaPosti = async (params) => {
+  const plannetAccessTokenResponse = await getPlanetToken()
+
+  if (!plannetAccessTokenResponse.success) {
+    return {
+      success: false,
+      error: plannetAccessTokenResponse.error
+    }
+  }
+
+  axiosClient.defaults.headers.common['Authorization'] = `Bearer ${plannetAccessTokenResponse.data.token}`;
+
+  try {
+    const response = await axiosClient.get('/api/Mappa/SbloccaPosti', {
+      params: {
+        tipoAbbonamentoId: parseInt(params.tipoAbbonamentoId),
+        postoId: parseInt(params.postoId)
+      }
+    });
+
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error
+    };
+  }
+};
+
 // Block Seat
 const getMappaBloccaPosto = async (params) => {
   const plannetAccessTokenResponse = await getPlanetToken()
@@ -1547,5 +1580,5 @@ module.exports = { getPlanetToken, getPlanetEvents, getPostiLiberiBiglietto, get
                    getPlaNetSubscriptionPrices, getPlanetTitoloEsteso, transferSeasonTicketToPerson, 
                    transferTicketToPerson, getPlanetSubscriptionAvailableSeat, getPlanetCheckSeasonTicketHolder,
                    getMappaPostiAbbonamentoInfo, getTitoliAcquistabiliAbbonamento, getTitoliAcquistabili,
-                   getPlanetEventDetail, getMappaBloccaPosti
+                   getPlanetEventDetail, getMappaBloccaPosti, getMappaSbloccaPosti
                   };
