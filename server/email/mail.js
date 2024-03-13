@@ -341,7 +341,7 @@ const emailTemplateFailureIssueSeasonTickets = (ticket, language, homePageTitle,
             </section>
             <section style="background-color: #f0f2f3;padding: 2em;">
               <p style="width: 90%;margin: auto;font-size: .75em;">
-                This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our privacy policy.
+                This message was produced and distributed by COMO 1907. ©2024, Inc. All rights reserved. COMO 1907 is a registered trademark. View our privacy policy.
               </p>
             </section>
           </footer>
@@ -426,7 +426,7 @@ const emailTemplateFailureIssueSeasonTickets = (ticket, language, homePageTitle,
             </section>
             <section style="background-color: #f0f2f3;padding: 2em;">
               <p style="width: 90%;margin: auto;font-size: .75em;">
-                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra informativa sulla privacy.
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2024, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra informativa sulla privacy.
               </p>
             </section>
           </footer>
@@ -524,7 +524,7 @@ const emailTemplateFailureIssueTickets = (ticket, language, homePageTitle, logoI
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
+                This message was produced and distributed by COMO 1907. ©2024, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
                 </p>
               </section>
             </footer>
@@ -620,7 +620,7 @@ const emailTemplateFailureIssueTickets = (ticket, language, homePageTitle, logoI
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2024, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
                 </p>
               </section>
             </footer>
@@ -710,7 +710,7 @@ const emailTemplateSeasonTicketTransferToReceiver = (ticket, language, homePageT
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
+                This message was produced and distributed by COMO 1907. ©2024, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
                 </p>
               </section>
             </footer>
@@ -796,7 +796,7 @@ const emailTemplateSeasonTicketTransferToReceiver = (ticket, language, homePageT
 
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2024, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
                 </p>
               </section>
             </footer>
@@ -887,7 +887,7 @@ const emailTemplateSeasonTicketTransferToSender = (ticket, language, homePageTit
               <section style="background-color: #f0f2f3;padding: 2em;">
 
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
+                This message was produced and distributed by COMO 1907. ©2024, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
                 </p>
               </section>
             </footer>
@@ -975,7 +975,7 @@ const emailTemplateSeasonTicketTransferToSender = (ticket, language, homePageTit
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2024, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
                 </p>
               </section>
             </footer>
@@ -1065,7 +1065,7 @@ const emailTemplateTicketTransferToReceiver = (ticket, language, homePageTitle, 
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                  This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
+                  This message was produced and distributed by COMO 1907. ©2024, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
                 </p>
               </section>
             </footer>
@@ -1149,7 +1149,7 @@ const emailTemplateTicketTransferToReceiver = (ticket, language, homePageTitle, 
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2024, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
                 </p>
               </section>
             </footer>
@@ -1238,7 +1238,7 @@ const emailTemplateTicketTransferToSender = (ticket, language, homePageTitle, lo
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
+                This message was produced and distributed by COMO 1907. ©2024, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
                 </p>
               </section>
             </footer>
@@ -1322,7 +1322,7 @@ const emailTemplateTicketTransferToSender = (ticket, language, homePageTitle, lo
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2024, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
                 </p>
               </section>
             </footer>
@@ -1441,7 +1441,7 @@ const emailTemplateTicketPurchase = (ticket, language, homePageTitle, logoImageU
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                  This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
+                  This message was produced and distributed by COMO 1907. ©2024, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
                 </p>
               </section>
             </footer>
@@ -1555,7 +1555,7 @@ const emailTemplateTicketPurchase = (ticket, language, homePageTitle, logoImageU
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2024, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
                 </p>
               </section>
             </footer>
@@ -1674,7 +1674,7 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                  This message was produced and distributed by COMO 1907. ©2023, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
+                  This message was produced and distributed by COMO 1907. ©2024, Inc. All rights reserved. COMO 1907 is a registered trademark. View our <a href="https://comofootball.com/en/privacy-policy/">privacy policy</a>
                 </p>
               </section>
             </footer>
@@ -1788,7 +1788,7 @@ const emailTemplateSeasonTicketPurchase = (ticket, language, homePageTitle, logo
               </section>
               <section style="background-color: #f0f2f3;padding: 2em;">
                 <p style="width: 90%;margin: auto;font-size: .75em;">
-                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2023, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
+                Questo messaggio è stato prodotto e distribuito da COMO 1907. ©2024, Inc. Tutti i diritti riservati. COMO 1907 è un marchio registrato. Visualizza la nostra <a href="https://comofootball.com/privacy-policy/">informativa sulla privacy</a>
                 </p>
               </section>
             </footer>
